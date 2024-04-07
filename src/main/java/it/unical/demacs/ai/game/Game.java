@@ -53,20 +53,10 @@ public class Game
         return true;
     }
 
-
     public void placeWall(Pair<Wall, Wall> toPlace)
     {
         walls.put(wallId, toPlace);
         wallId++;
     }
 
-    public static void main(String [] args){
-        Wall wall1 = new Wall(new Pair<Integer,Integer>(1, 1), new Pair<Integer,Integer>(1, 2));
-        Wall wall2 = new Wall(new Pair<Integer,Integer>(2, 1), new Pair<Integer,Integer>(2, 2));
-        Wall wall3 = new Wall(new Pair<Integer,Integer>(1, 1), new Pair<Integer,Integer>(2, 1));
-        Wall wall4 = new Wall(new Pair<Integer,Integer>(1, 2), new Pair<Integer,Integer>(2, 2));
-        Game.getInstance().placeWall(new Pair<>(wall3, wall4));
-        System.out.println(Game.getInstance().canPlaceWall(new Pair<>(wall2, wall1)));
-    }
-    
 }
