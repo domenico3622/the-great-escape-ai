@@ -8,19 +8,26 @@ import java.util.*;
 
 public class Game {
 
-    private static Game game = new Game();                      // istanza di game
+    private static Game game = null;                      // istanza di game
     private List<List<Orientations>> wallBoard;                 // matrice dei muri
+    private List<List<Integer>> wallBoardPossession;            // matrice che indica chi ha piazzato i muri
     private List<Player> players;                               // lista dei giocatori
+    private List<Integer> wallsAvailable;
 
     private Game(){
         players = new ArrayList<>();                            // inizializzo l'array dei giocatori
         wallBoard = new ArrayList<>();                          // inizializzo la matrice dei muri
+        wallBoardPossession = new ArrayList<>();                // inizializzo la matrice che indica chi ha piazzato i muri
+        wallsAvailable = new ArrayList<>();
         for(int i = 0; i < (Settings.boardDim-1); i++){
             List<Orientations> row = new ArrayList<>();
+            List<Integer> row2 = new ArrayList<>();
             for(int j = 0; j < (Settings.boardDim-1); j++){
                 row.add(Orientations.VOID);
+                row2.add(-1);
             }
             wallBoard.add(row);
+            wallBoardPossession.add(row2);
         }
     }
     
@@ -28,7 +35,11 @@ public class Game {
      * metodo per ottenere l'istanza singleton della partita
      * @return l'istanza singleton della partita
      */
-    public static Game getInstance() { return game; }           // metodo singleton
+    public static Game getInstance() {
+        if (game == null)
+            game = new Game();
+        return game;
+    }           // metodo singleton
 
     /**
      * metodo per calcolare se un giocatore si può muovere di un passo nella direzione dir
@@ -85,6 +96,21 @@ public class Game {
             }
         }
         return false;
+    }
+
+    /**
+     * metodo per controllare che un muro si possa aggiungere, in una determinata posizione e con un determinato orientamento e con un determinato giocatore
+     * @param pos posizione del muro da aggiungere
+     * @param orientation orientamento del muro da aggiungere
+     * @param player giocatore che vuole piazzare il muro
+     * @return true se il muro si può aggiungere, false altrimenti
+     */
+    public boolean canPlaceWall(Pair<Integer, Integer> pos, Orientations orientation, Player player) {
+        // controllo che il giocatore abbia ancora muri disponibili
+        if(wallsAvailable.get(players.indexOf(player)) < 1){
+            return false;
+        }
+        return canPlaceWall(pos, orientation);
     }
 
     /**
@@ -171,7 +197,7 @@ public class Game {
     }
 
     /**
-     * metodo per aggiungere un muro alla partita
+     * metodo per aggiungere un muro alla partita senza proprietario
      * @param pos un pair che indica le coordinate del muro da aggiungere
      * @param orientation in che direzione il muro è orientato
      * @implNote attenzione! non controlla che il muro sia posizionabile, lo aggiunge e basta.
@@ -179,6 +205,20 @@ public class Game {
      */
     public void placeWall(Pair<Integer, Integer> pos, Orientations orientation){
         wallBoard.get(pos.first).set(pos.second, orientation);
+    }
+
+    /**
+     * metodo per aggiungere un muro alla partita con proprietario
+     * @param pos un pair che indica le coordinate del muro da aggiungere
+     * @param orientation in che direzione il muro è orientato
+     * @param player il giocatore che ha piazzato il muro
+     * @implNote attenzione! non controlla che il muro sia posizionabile, lo aggiunge e basta.
+     * @implNote se nella stessa posizione è già presente un muro, lo sovrascrive
+     */
+    public void placeWall(Pair<Integer, Integer> pos, Orientations orientation, Player player){
+        wallBoard.get(pos.first).set(pos.second, orientation);
+        wallBoardPossession.get(pos.first).set(pos.second, players.indexOf(player));
+        wallsAvailable.set(players.indexOf(player), wallsAvailable.get(players.indexOf(player))-1);
     }
 
     /**
@@ -195,5 +235,13 @@ public class Game {
      */
     public List<List<Orientations>> getWallBoard(){
         return wallBoard;
+    }
+
+    /**
+     * metodo per ottenere il numero dei muri disponibili per ogni player
+     * @return la lista del numero dei muri disponibili
+     */
+    public void setWallsAvailable(List<Integer> wallsAvailable) {
+        this.wallsAvailable = wallsAvailable;
     }
 }

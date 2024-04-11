@@ -1,10 +1,15 @@
 package it.unical.demacs.ai.model;
 
-public class Settings 
+import java.awt.*;
+import java.util.HashMap;
+import java.util.Map;
+
+public class Settings
 {
-    public static final int boardDim = 9; // dimensioni della board
+    public static int boardDim; // dimensioni della board
     public static enum Orientations {VERTICAL, HORIZONTAL, VOID};
-    public static final int maxPlayers = 4;
     public static enum Directions {RIGHT, LEFT, UP, DOWN};
+    public static Map<Directions, Color> dirCol = new HashMap<>(); // Associa a ogni direzione un colore
+    public static Map<Directions, String> dirPath = new HashMap<>(); // Associa ad ogni direzione un path di un icona
     
 }

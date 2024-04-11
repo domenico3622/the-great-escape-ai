@@ -1,9 +1,14 @@
 package it.unical.demacs.ai.view;
 
+import it.unical.demacs.ai.model.Game;
+import it.unical.demacs.ai.model.Player;
+import it.unical.demacs.ai.model.Settings;
+import it.unical.demacs.ai.utils.Pair;
+
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Random;
 
 public class MainMenu extends JPanel{
 
@@ -19,6 +24,7 @@ public class MainMenu extends JPanel{
     private JComboBox<String> WSolver;
 
     private JSlider sliderWalls;
+    private JSlider sliderMatrix;
 
     String[] solvers = new String[]{"No Player" , "NO IA", "ASPetta e Infera", "Grissin Van Bon", "JYPapi", "IRS"};
 
@@ -29,12 +35,12 @@ public class MainMenu extends JPanel{
 
 
         icons = new IconItem[]{
-                new IconItem(getIconResized("calimeri"), "Calimeri"),
-                new IconItem(getIconResized("dodaro"), "Dodaro"),
-                new IconItem(getIconResized("ianni"), "Ianni"),
-                new IconItem(getIconResized("perri"), "Perri"),
-                new IconItem(getIconResized("spataro"), "Spataro"),
-                new IconItem(getIconResized("vanbon"), "Van Bon"),
+                new IconItem(getIconResized("calimeri"), "Calimeri", new Color(43, 169, 19), "calimeri"),
+                new IconItem(getIconResized("dodaro"), "Dodaro", new Color(0, 0, 0), "dodaro"),
+                new IconItem(getIconResized("ianni"), "Ianni", new Color(0, 85, 184), "ianni"),
+                new IconItem(getIconResized("perri"), "Perri", new Color(236, 0, 140), "perri"),
+                new IconItem(getIconResized("spataro"), "Spataro", new Color(244, 212, 34), "spataro"),
+                new IconItem(getIconResized("vanbon"), "Van Bon", new Color(244, 34, 34), "vanbon"),
         };
 
         NSolver = new JComboBox<>(solvers);
@@ -62,9 +68,17 @@ public class MainMenu extends JPanel{
         EPlayer.setSelectedItem(null);
         WPlayer.setSelectedItem(null);
 
-        sliderWalls = new JSlider(1, 10, 3);
+        sliderWalls = new JSlider(3, 10, 6);
+        sliderMatrix = new JSlider(6, 15, 9);
+
         sliderWalls.setPaintTicks(true);
+        sliderWalls.setMajorTickSpacing(1);
         sliderWalls.setPaintLabels(true);
+
+        sliderMatrix.setPaintTicks(true);
+        sliderMatrix.setMajorTickSpacing(1);
+        sliderMatrix.setPaintLabels(true);
+
 
 
         NSolver.addActionListener(e -> {
@@ -105,6 +119,74 @@ public class MainMenu extends JPanel{
 
         startButton = new JButton("Start");
 
+        startButton.addActionListener(e -> {
+            if ((NSolver.getSelectedItem() != "No Player" && NPlayer.getSelectedItem() == null) || (SSolver.getSelectedItem() != "No Player" && SPlayer.getSelectedItem() == null) || (ESolver.getSelectedItem() != "No Player" && EPlayer.getSelectedItem() == null) || (WSolver.getSelectedItem() != "No Player" && WPlayer.getSelectedItem() == null)){
+                JOptionPane.showMessageDialog(this, "Tutti i player attivi devono avere un Icon", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            ArrayList<Integer> iconIndex = new ArrayList<>();
+            if (NPlayer.getSelectedItem() != null) {
+                iconIndex.add(NPlayer.getSelectedIndex());
+            }
+            if (SPlayer.getSelectedItem() != null) {
+                iconIndex.add(SPlayer.getSelectedIndex());
+            }
+            if (EPlayer.getSelectedItem() != null) {
+                iconIndex.add(EPlayer.getSelectedIndex());
+            }
+            if (WPlayer.getSelectedItem() != null) {
+                iconIndex.add(WPlayer.getSelectedIndex());
+            }
+
+            if (iconIndex.size() < 2){
+                JOptionPane.showMessageDialog(this, "Non ci sono abbastanza giocatori", "Error", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+
+            // Controlla se ci sono duplicati di icona
+            for (int i = 0; i < iconIndex.size(); i++) {
+                for (int j = i + 1; j < iconIndex.size(); j++) {
+                    if (iconIndex.get(i).equals(iconIndex.get(j))) {
+                        JOptionPane.showMessageDialog(this, "Non possono esserci due player con la stessa icona", "Error", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+                }
+            }
+
+            // Imposta le impostazioni
+            Settings.boardDim = sliderMatrix.getValue();
+            Random Random = new Random();
+            if (NPlayer.getSelectedItem() != null) {
+                Game.getInstance().addPlayer(new Player(new Pair<>(0, Random.nextInt(0, Settings.boardDim)), Settings.Directions.DOWN));
+                Settings.dirCol.put(Settings.Directions.DOWN, icons[NPlayer.getSelectedIndex()].color);
+                Settings.dirPath.put(Settings.Directions.DOWN, icons[NPlayer.getSelectedIndex()].resourceName);
+            }
+            if (SPlayer.getSelectedItem() != null) {
+                Game.getInstance().addPlayer(new Player(new Pair<>(Settings.boardDim - 1, Random.nextInt(0, Settings.boardDim)), Settings.Directions.UP));
+                Settings.dirCol.put(Settings.Directions.UP, icons[SPlayer.getSelectedIndex()].color);
+                Settings.dirPath.put(Settings.Directions.UP, icons[SPlayer.getSelectedIndex()].resourceName);
+            }
+            if (EPlayer.getSelectedItem() != null) {
+                Game.getInstance().addPlayer(new Player(new Pair<>(Random.nextInt(0, Settings.boardDim), Settings.boardDim - 1), Settings.Directions.LEFT));
+                Settings.dirCol.put(Settings.Directions.LEFT, icons[EPlayer.getSelectedIndex()].color);
+                Settings.dirPath.put(Settings.Directions.LEFT, icons[EPlayer.getSelectedIndex()].resourceName);
+            }
+            if (WPlayer.getSelectedItem() != null) {
+                Game.getInstance().addPlayer(new Player(new Pair<>(Random.nextInt(0, Settings.boardDim), 0), Settings.Directions.RIGHT));
+                Settings.dirCol.put(Settings.Directions.RIGHT, icons[WPlayer.getSelectedIndex()].color);
+                Settings.dirPath.put(Settings.Directions.RIGHT, icons[WPlayer.getSelectedIndex()].resourceName);
+            }
+
+            ArrayList<Integer> walls = new ArrayList<>();
+            for (int i = 0; i < iconIndex.size(); i++) {
+                walls.add(sliderWalls.getValue());
+            }
+            Game.getInstance().setWallsAvailable(walls);
+
+            // Chiudi il dialog
+            SwingUtilities.getWindowAncestor(this).dispose();
+        });
+
         JPanel AISelectionPanel = new JPanel(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
 
@@ -119,7 +201,7 @@ public class MainMenu extends JPanel{
         AISelectionPanel.add(new JLabel("West:"), c);
 
         c.gridx = 1;
-        c.weightx = 2;
+        c.weightx = 3;
 
         AISelectionPanel.add(new JLabel("Solver"), c);
         AISelectionPanel.add(NSolver, c);
@@ -127,26 +209,48 @@ public class MainMenu extends JPanel{
         AISelectionPanel.add(ESolver, c);
         AISelectionPanel.add(WSolver, c);
 
-        c.gridx = 3;
+        c.gridx = 4;
+        c.weightx = 1;
+
         AISelectionPanel.add(new JLabel("Player Icon"), c);
         AISelectionPanel.add(NPlayer, c);
         AISelectionPanel.add(SPlayer, c);
         AISelectionPanel.add(EPlayer, c);
         AISelectionPanel.add(WPlayer, c);
 
-        c.gridx = 1;
         c.gridy = 5;
-        c.gridwidth = 4;
+        c.gridx = 0;
+        c.gridwidth = 5;
+        AISelectionPanel.add(new JSeparator(), c);
 
-        AISelectionPanel.add(new JSlider(1, 10, 3), c);
+        c.gridy = 6;
+        c.gridwidth = 1;
+
+        AISelectionPanel.add(new JLabel("Walls"), c);
 
         c.gridx = 1;
-        c.gridy = 6;
         c.gridwidth = 4;
+
+        AISelectionPanel.add(sliderWalls, c);
+
+        c.gridy = 7;
+        c.gridx = 0;
+        c.gridwidth = 1;
+
+        AISelectionPanel.add(new JLabel("Matrix"), c);
+
+        c.gridx = 1;
+        c.gridwidth = 4;
+
+        AISelectionPanel.add(sliderMatrix, c);
+
+        c.gridx = 0;
+        c.gridy = 8;
+        c.gridwidth = 5;
 
         AISelectionPanel.add(startButton, c);
 
-        AISelectionPanel.setPreferredSize(new Dimension(400, 280)) ;
+        AISelectionPanel.setPreferredSize(new Dimension(400, 400)) ;
 
         add(AISelectionPanel);
     }
@@ -155,10 +259,14 @@ public class MainMenu extends JPanel{
     private class IconItem {
         private ImageIcon icon;
         private String description;
+        private Color color;
+        private String resourceName;
 
-        public IconItem(ImageIcon icon, String description) {
+        public IconItem(ImageIcon icon, String description, Color c, String resourceName) {
             this.icon = icon;
             this.description = description;
+            this.color = c;
+            this.resourceName = resourceName;
         }
 
         public ImageIcon getIcon() {
