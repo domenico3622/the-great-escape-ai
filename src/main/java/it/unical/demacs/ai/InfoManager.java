@@ -1,12 +1,19 @@
 package it.unical.demacs.ai;
 
+import java.awt.*;
+import java.io.IOException;
+import java.util.Dictionary;
+import java.util.Objects;
+import javax.imageio.ImageIO;
+
 public class InfoManager {
-    private InfoManager instance = null;
+    private static InfoManager instance = null;
+    private static Dictionary<String, Image> playersIcon;
 
     private InfoManager() {
     }
 
-    public InfoManager getInstance() {
+    public static InfoManager getInstance() {
         if (instance == null) {
             instance = new InfoManager();
         }
