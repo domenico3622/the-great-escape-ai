@@ -12,7 +12,8 @@ public class Game {
     private List<List<Orientations>> wallBoard;                 // matrice dei muri
     private List<List<Directions>> wallBoardPossession;            // matrice che indica chi ha piazzato i muri
     private List<Player> players;                               // lista dei giocatori
-    private Map wallsAvailable;
+    private Map wallsAvailable;         //per ogni giocatore indica quanti muri ha a disposizione
+
 
     private Game(){
         players = new ArrayList<>();                            // inizializzo l'array dei giocatori
@@ -74,6 +75,18 @@ public class Game {
         // se sto andando giu e mi trovo sul bordo destro o sinistro della mappa posso evitare di controllare rispettivamente il muro sopra e sotto di me. negli altri casi controllo che non ci sia un muro orizzontale che mi blocca
         boolean cond8 = dir == Directions.DOWN && (player.getCoord().first + offsetX > (Settings.boardDim-2) || wallBoard.get(player.getCoord().first + offsetX).get(player.getCoord().second + offsetY) != Orientations.HORIZONTAL) && (player.getCoord().first + offsetX < 1 || wallBoard.get(player.getCoord().first + offsetX-1).get(player.getCoord().second + offsetY) != Orientations.HORIZONTAL);
         return cond1 && cond2 && cond3 && cond4 && (cond5 || cond6 || cond7 || cond8);
+    }
+
+    public void move(Player player, Directions dir){
+        if (dir == Directions.RIGHT) {
+            player.setCoord(new Pair<>(player.getCoord().first, player.getCoord().second + 1));
+        } else if (dir == Directions.LEFT) {
+            player.setCoord(new Pair<>(player.getCoord().first, player.getCoord().second - 1));
+        } else if (dir == Directions.UP) {
+            player.setCoord(new Pair<>(player.getCoord().first - 1, player.getCoord().second));
+        } else if (dir == Directions.DOWN) {
+            player.setCoord(new Pair<>(player.getCoord().first + 1, player.getCoord().second));
+        }
     }
 
     /**
@@ -255,5 +268,17 @@ public class Game {
 
     public Map<Directions, Integer> getWallsAvailable() {
         return wallsAvailable;
+    }
+
+    public int turnodi;
+    public void getStarterPlayer(){
+        Random rand = new Random();
+        turnodi = rand.nextInt(0,players.size());
+        System.out.println("Il giocatore che inizia è il "+ turnodi);
+    }
+    public Player getCurrentPlayer(){
+        Player temp= players.get(turnodi);
+        turnodi = (turnodi+1)%players.size();
+        return temp;
     }
 }

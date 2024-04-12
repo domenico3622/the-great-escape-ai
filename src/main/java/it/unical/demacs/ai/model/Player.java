@@ -16,4 +16,5 @@ public class Player
     public Pair<Integer, Integer> getCoord() { return coord; }
     
     public Directions getDirection() { return goalDir; }
+    public void setCoord(Pair<Integer, Integer> _coord) { coord = _coord; }
 }

@@ -1,5 +1,9 @@
 package it.unical.demacs.ai.view;
 
+import it.unical.demacs.ai.model.Game;
+import it.unical.demacs.ai.model.Settings;
+import it.unical.demacs.ai.utils.Pair;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -124,8 +128,51 @@ public class ControlPanel extends JPanel {
         c.gridx = 2;
         add(bAvanti, c);
 
+        bSopra.addActionListener(e -> {
+            int turnodi = Game.getInstance().turnodi;
+            if (Game.getInstance().canMove(Game.getInstance().getPlayers().get(turnodi), Settings.Directions.UP)) {
+                System.out.println("il giocatore turno" + " "+ turnodi + " si trova in " + Game.getInstance().getPlayers().get(turnodi).getCoord().first + " " + Game.getInstance().getPlayers().get(turnodi).getCoord().second);
+                Game.getInstance().move(Game.getInstance().getCurrentPlayer(), Settings.Directions.UP);
+                System.out.println("il giocatore turno" + " "+ turnodi + " si sposta in " + Game.getInstance().getPlayers().get(turnodi).getCoord().first + " " + Game.getInstance().getPlayers().get(turnodi).getCoord().second);
+            }
+        });
 
+        bSotto.addActionListener(e -> {
+            int turnodi = Game.getInstance().turnodi;
+            if (Game.getInstance().canMove(Game.getInstance().getPlayers().get(turnodi), Settings.Directions.DOWN)) {
+                System.out.println("il giocatore turno" + " "+ turnodi + " si trova in " + Game.getInstance().getPlayers().get(turnodi).getCoord().first + " " + Game.getInstance().getPlayers().get(turnodi).getCoord().second);
+                Game.getInstance().move(Game.getInstance().getCurrentPlayer(), Settings.Directions.DOWN);
+                System.out.println("il giocatore turno" + " "+ turnodi + " si sposta in " + Game.getInstance().getPlayers().get(turnodi).getCoord().first + " " + Game.getInstance().getPlayers().get(turnodi).getCoord().second);
+            }
+        });
 
+        bDestra.addActionListener(e -> {
+            int turnodi = Game.getInstance().turnodi;
+            if (Game.getInstance().canMove(Game.getInstance().getPlayers().get(turnodi), Settings.Directions.RIGHT)) {
+                System.out.println("il giocatore turno" + " "+ turnodi + " si trova in " + Game.getInstance().getPlayers().get(turnodi).getCoord().first + " " + Game.getInstance().getPlayers().get(turnodi).getCoord().second);
+                Game.getInstance().move(Game.getInstance().getCurrentPlayer(), Settings.Directions.RIGHT);
+                System.out.println("il giocatore turno" + " "+ turnodi + " si sposta in " + Game.getInstance().getPlayers().get(turnodi).getCoord().first + " " + Game.getInstance().getPlayers().get(turnodi).getCoord().second);
+            }
+        });
+
+        bSinistra.addActionListener(e -> {
+            int turnodi = Game.getInstance().turnodi;
+            if (Game.getInstance().canMove(Game.getInstance().getPlayers().get(turnodi), Settings.Directions.LEFT)) {
+                System.out.println("il giocatore turno" + " "+ turnodi + " si trova in " + Game.getInstance().getPlayers().get(turnodi).getCoord().first + " " + Game.getInstance().getPlayers().get(turnodi).getCoord().second);
+                Game.getInstance().move(Game.getInstance().getCurrentPlayer(), Settings.Directions.LEFT);
+                System.out.println("il giocatore turno" + " "+ turnodi + " si sposta in " + Game.getInstance().getPlayers().get(turnodi).getCoord().first + " " + Game.getInstance().getPlayers().get(turnodi).getCoord().second);
+            }
+        });
+
+        bWallPlace.addActionListener(e -> {
+            int turnodi = Game.getInstance().turnodi;
+            Settings.Orientations orientation = rWallVert.isSelected() ? Settings.Orientations.VERTICAL : Settings.Orientations.HORIZONTAL;
+            Integer x = Integer.parseInt(fWallX.getText());
+            Integer y = Integer.parseInt(fWallY.getText());
+            Pair<Integer, Integer> p = new Pair<>(y, x);  //LI HO INVERTITI PERCHE LE POSIZIONI DEI MURI VANNO AL CONTRARIO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            if (Game.getInstance().canPlaceWall(p, orientation)) {
+                Game.getInstance().placeWall(p, orientation, Game.getInstance().getCurrentPlayer());
+            }
+        });
     }
-
 }
