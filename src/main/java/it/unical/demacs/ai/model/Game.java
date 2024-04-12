@@ -252,4 +252,8 @@ public class Game {
     public void setWallsAvailable(Map<Directions, Integer> wallsAvailable) {
         this.wallsAvailable = wallsAvailable;
     }
+
+    public Map<Directions, Integer> getWallsAvailable() {
+        return wallsAvailable;
+    }
 }

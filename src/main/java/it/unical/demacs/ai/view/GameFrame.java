@@ -5,6 +5,7 @@ import java.awt.*;
 
 public class GameFrame extends JFrame{
         public GamePanel gamePanel;
+        public ControlPanel controlPanel;
 
         public GameFrame() {
             super("The Great Escape - Game");
@@ -19,7 +20,7 @@ public class GameFrame extends JFrame{
             panelCaricamento.setBackground(Color.LIGHT_GRAY);
             add(panelCaricamento);
 
-            setSize(720, 750);
+            setSize(900, 750);
             setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             setResizable(false);
             setVisible(true);
@@ -32,6 +33,7 @@ public class GameFrame extends JFrame{
             dialog.setVisible(true);
 
             gamePanel = new GamePanel();
+            controlPanel = new ControlPanel();
 
             new java.util.Timer().schedule(
                 new java.util.TimerTask() {
@@ -43,8 +45,12 @@ public class GameFrame extends JFrame{
                 250
             );
 
-            add(gamePanel);
             remove(panelCaricamento);
+            JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, gamePanel, controlPanel);
+            splitPane.setDividerLocation(690);
+            splitPane.setEnabled(false);
+            add(splitPane);
+
             setVisible(true);
         }
 }

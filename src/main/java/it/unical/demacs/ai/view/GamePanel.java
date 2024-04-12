@@ -36,7 +36,7 @@ public class GamePanel extends JPanel {
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         g.setColor(Color.LIGHT_GRAY);
-        g.fillRect(0, 0, 720, 750);
+        g.fillRect(0, 0, 700, 750);
 
         g.setColor(Color.WHITE);
         // Draw the grid
@@ -99,6 +99,35 @@ public class GamePanel extends JPanel {
                 }
             }
         }
+
+        // Select font
+        g.setFont(new Font("TimesRoman", Font.PLAIN, 20));
+
+        // Draw the wall available
+        if(Game.getInstance().getWallsAvailable().containsKey(Settings.Directions.UP))
+        {
+            g.setColor(Settings.dirCol.get(Settings.Directions.UP));
+            g.drawString(Game.getInstance().getWallsAvailable().get(Settings.Directions.UP).toString(), offset + lineLength/2 - 10, offset - 35);
+        }
+
+        if(Game.getInstance().getWallsAvailable().containsKey(Settings.Directions.DOWN))
+        {
+            g.setColor(Settings.dirCol.get(Settings.Directions.DOWN));
+            g.drawString("" + Game.getInstance().getWallsAvailable().get(Settings.Directions.DOWN), offset + lineLength/2 - 10, offset + lineLength + 45);
+        }
+
+        if(Game.getInstance().getWallsAvailable().containsKey(Settings.Directions.RIGHT))
+        {
+            g.setColor(Settings.dirCol.get(Settings.Directions.RIGHT));
+            g.drawString("" + Game.getInstance().getWallsAvailable().get(Settings.Directions.RIGHT), offset + lineLength + 35, offset + lineLength/2);
+        }
+
+        if(Game.getInstance().getWallsAvailable().containsKey(Settings.Directions.LEFT))
+        {
+            g.setColor(Settings.dirCol.get(Settings.Directions.LEFT));
+            g.drawString("" + Game.getInstance().getWallsAvailable().get(Settings.Directions.LEFT), offset - 45, offset + lineLength/2);
+        }
+
     }
 }
 
