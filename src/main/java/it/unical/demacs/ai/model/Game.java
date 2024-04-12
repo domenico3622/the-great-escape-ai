@@ -10,21 +10,21 @@ public class Game {
 
     private static Game game = null;                      // istanza di game
     private List<List<Orientations>> wallBoard;                 // matrice dei muri
-    private List<List<Integer>> wallBoardPossession;            // matrice che indica chi ha piazzato i muri
+    private List<List<Directions>> wallBoardPossession;            // matrice che indica chi ha piazzato i muri
     private List<Player> players;                               // lista dei giocatori
-    private List<Integer> wallsAvailable;
+    private Map wallsAvailable;
 
     private Game(){
         players = new ArrayList<>();                            // inizializzo l'array dei giocatori
         wallBoard = new ArrayList<>();                          // inizializzo la matrice dei muri
         wallBoardPossession = new ArrayList<>();                // inizializzo la matrice che indica chi ha piazzato i muri
-        wallsAvailable = new ArrayList<>();
+        wallsAvailable = new HashMap<>();
         for(int i = 0; i < (Settings.boardDim-1); i++){
             List<Orientations> row = new ArrayList<>();
-            List<Integer> row2 = new ArrayList<>();
+            List<Directions> row2 = new ArrayList<>();
             for(int j = 0; j < (Settings.boardDim-1); j++){
                 row.add(Orientations.VOID);
-                row2.add(-1);
+                row2.add(Directions.VOID);
             }
             wallBoard.add(row);
             wallBoardPossession.add(row2);
@@ -107,7 +107,7 @@ public class Game {
      */
     public boolean canPlaceWall(Pair<Integer, Integer> pos, Orientations orientation, Player player) {
         // controllo che il giocatore abbia ancora muri disponibili
-        if(wallsAvailable.get(players.indexOf(player)) < 1){
+        if((Integer)wallsAvailable.get(player.getDirection()) < 1){
             return false;
         }
         return canPlaceWall(pos, orientation);
@@ -217,8 +217,8 @@ public class Game {
      */
     public void placeWall(Pair<Integer, Integer> pos, Orientations orientation, Player player){
         wallBoard.get(pos.first).set(pos.second, orientation);
-        wallBoardPossession.get(pos.first).set(pos.second, players.indexOf(player));
-        wallsAvailable.set(players.indexOf(player), wallsAvailable.get(players.indexOf(player))-1);
+        wallBoardPossession.get(pos.first).set(pos.second, player.getDirection());
+        wallsAvailable.put(player.getDirection(), (Integer)wallsAvailable.get(player.getDirection())-1);
     }
 
     /**
@@ -238,10 +238,18 @@ public class Game {
     }
 
     /**
+     * metodo per ottenere la matrice che indica chi ha piazzato i muri
+     * @return la matrice che indica chi ha piazzato i muri
+     */
+    public List<List<Directions>> getWallBoardPossession(){
+        return wallBoardPossession;
+    }
+
+    /**
      * metodo per ottenere il numero dei muri disponibili per ogni player
      * @return la lista del numero dei muri disponibili
      */
-    public void setWallsAvailable(List<Integer> wallsAvailable) {
+    public void setWallsAvailable(Map<Directions, Integer> wallsAvailable) {
         this.wallsAvailable = wallsAvailable;
     }
 }

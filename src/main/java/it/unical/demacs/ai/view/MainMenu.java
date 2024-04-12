@@ -8,6 +8,8 @@ import it.unical.demacs.ai.utils.Pair;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 public class MainMenu extends JPanel{
@@ -155,33 +157,34 @@ public class MainMenu extends JPanel{
 
             // Imposta le impostazioni
             Settings.boardDim = sliderMatrix.getValue();
+            Map<Settings.Directions, Integer> wallsAvailable = new HashMap<>();
             Random Random = new Random();
             if (NPlayer.getSelectedItem() != null) {
                 Game.getInstance().addPlayer(new Player(new Pair<>(0, Random.nextInt(0, Settings.boardDim)), Settings.Directions.DOWN));
                 Settings.dirCol.put(Settings.Directions.DOWN, icons[NPlayer.getSelectedIndex()].color);
-                Settings.dirPath.put(Settings.Directions.DOWN, icons[NPlayer.getSelectedIndex()].resourceName);
+                Settings.dirPath.put(Settings.Directions.DOWN, icons[NPlayer.getSelectedIndex()].getResourceName());
+                wallsAvailable.put(Settings.Directions.DOWN, sliderWalls.getValue());
             }
             if (SPlayer.getSelectedItem() != null) {
                 Game.getInstance().addPlayer(new Player(new Pair<>(Settings.boardDim - 1, Random.nextInt(0, Settings.boardDim)), Settings.Directions.UP));
                 Settings.dirCol.put(Settings.Directions.UP, icons[SPlayer.getSelectedIndex()].color);
-                Settings.dirPath.put(Settings.Directions.UP, icons[SPlayer.getSelectedIndex()].resourceName);
+                Settings.dirPath.put(Settings.Directions.UP, icons[SPlayer.getSelectedIndex()].getResourceName());
+                wallsAvailable.put(Settings.Directions.UP, sliderWalls.getValue());
             }
             if (EPlayer.getSelectedItem() != null) {
                 Game.getInstance().addPlayer(new Player(new Pair<>(Random.nextInt(0, Settings.boardDim), Settings.boardDim - 1), Settings.Directions.LEFT));
                 Settings.dirCol.put(Settings.Directions.LEFT, icons[EPlayer.getSelectedIndex()].color);
-                Settings.dirPath.put(Settings.Directions.LEFT, icons[EPlayer.getSelectedIndex()].resourceName);
+                Settings.dirPath.put(Settings.Directions.LEFT, icons[EPlayer.getSelectedIndex()].getResourceName());
+                wallsAvailable.put(Settings.Directions.LEFT, sliderWalls.getValue());
             }
             if (WPlayer.getSelectedItem() != null) {
                 Game.getInstance().addPlayer(new Player(new Pair<>(Random.nextInt(0, Settings.boardDim), 0), Settings.Directions.RIGHT));
                 Settings.dirCol.put(Settings.Directions.RIGHT, icons[WPlayer.getSelectedIndex()].color);
-                Settings.dirPath.put(Settings.Directions.RIGHT, icons[WPlayer.getSelectedIndex()].resourceName);
+                Settings.dirPath.put(Settings.Directions.RIGHT, icons[WPlayer.getSelectedIndex()].getResourceName());
+                wallsAvailable.put(Settings.Directions.RIGHT, sliderWalls.getValue());
             }
 
-            ArrayList<Integer> walls = new ArrayList<>();
-            for (int i = 0; i < iconIndex.size(); i++) {
-                walls.add(sliderWalls.getValue());
-            }
-            Game.getInstance().setWallsAvailable(walls);
+            Game.getInstance().setWallsAvailable(wallsAvailable);
 
             // Chiudi il dialog
             SwingUtilities.getWindowAncestor(this).dispose();
@@ -275,6 +278,14 @@ public class MainMenu extends JPanel{
 
         public String getDescription() {
             return description;
+        }
+
+        public Color getColor() {
+            return color;
+        }
+
+        public String getResourceName() {
+            return resourceName;
         }
     }
 

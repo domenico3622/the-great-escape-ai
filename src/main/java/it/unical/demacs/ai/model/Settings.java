@@ -8,8 +8,8 @@ public class Settings
 {
     public static int boardDim; // dimensioni della board
     public static enum Orientations {VERTICAL, HORIZONTAL, VOID};
-    public static enum Directions {RIGHT, LEFT, UP, DOWN};
+    public static enum Directions {RIGHT, LEFT, UP, DOWN, VOID};
     public static Map<Directions, Color> dirCol = new HashMap<>(); // Associa a ogni direzione un colore
-    public static Map<Directions, String> dirPath = new HashMap<>(); // Associa ad ogni direzione un path di un icona
+    public static Map<Directions, String> dirPath = new HashMap<>(); // Associa a ogni direzione un path
     
 }
