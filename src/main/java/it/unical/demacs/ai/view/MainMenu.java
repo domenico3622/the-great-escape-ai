@@ -186,11 +186,6 @@ public class MainMenu extends JPanel{
 
             Game.getInstance().setWallsAvailable(wallsAvailable);
 
-            Game.getInstance().getStarterPlayer();
-            //per ogni giocatore all'interno di Game stampa le coordinate
-            for (Player p : Game.getInstance().getPlayers()) {
-                System.out.println("il giocatore turno" + " "+ p + " si trova in " + p.getCoord().first + " " + p.getCoord().second);
-            }
 
             // Chiudi il dialog
             SwingUtilities.getWindowAncestor(this).dispose();

@@ -129,43 +129,30 @@ public class ControlPanel extends JPanel {
         add(bAvanti, c);
 
         bSopra.addActionListener(e -> {
-            int turnodi = Game.getInstance().turnodi;
-            if (Game.getInstance().canMove(Game.getInstance().getPlayers().get(turnodi), Settings.Directions.UP)) {
-                System.out.println("il giocatore turno" + " "+ turnodi + " si trova in " + Game.getInstance().getPlayers().get(turnodi).getCoord().first + " " + Game.getInstance().getPlayers().get(turnodi).getCoord().second);
-                Game.getInstance().move(Game.getInstance().getCurrentPlayer(), Settings.Directions.UP);
-                System.out.println("il giocatore turno" + " "+ turnodi + " si sposta in " + Game.getInstance().getPlayers().get(turnodi).getCoord().first + " " + Game.getInstance().getPlayers().get(turnodi).getCoord().second);
+            if (Game.getInstance().canMove(Settings.Directions.UP)) {
+                Game.getInstance().move(Settings.Directions.UP);
             }
         });
 
         bSotto.addActionListener(e -> {
-            int turnodi = Game.getInstance().turnodi;
-            if (Game.getInstance().canMove(Game.getInstance().getPlayers().get(turnodi), Settings.Directions.DOWN)) {
-                System.out.println("il giocatore turno" + " "+ turnodi + " si trova in " + Game.getInstance().getPlayers().get(turnodi).getCoord().first + " " + Game.getInstance().getPlayers().get(turnodi).getCoord().second);
-                Game.getInstance().move(Game.getInstance().getCurrentPlayer(), Settings.Directions.DOWN);
-                System.out.println("il giocatore turno" + " "+ turnodi + " si sposta in " + Game.getInstance().getPlayers().get(turnodi).getCoord().first + " " + Game.getInstance().getPlayers().get(turnodi).getCoord().second);
+            if (Game.getInstance().canMove(Settings.Directions.DOWN)) {
+                Game.getInstance().move(Settings.Directions.DOWN);
             }
         });
 
         bDestra.addActionListener(e -> {
-            int turnodi = Game.getInstance().turnodi;
-            if (Game.getInstance().canMove(Game.getInstance().getPlayers().get(turnodi), Settings.Directions.RIGHT)) {
-                System.out.println("il giocatore turno" + " "+ turnodi + " si trova in " + Game.getInstance().getPlayers().get(turnodi).getCoord().first + " " + Game.getInstance().getPlayers().get(turnodi).getCoord().second);
-                Game.getInstance().move(Game.getInstance().getCurrentPlayer(), Settings.Directions.RIGHT);
-                System.out.println("il giocatore turno" + " "+ turnodi + " si sposta in " + Game.getInstance().getPlayers().get(turnodi).getCoord().first + " " + Game.getInstance().getPlayers().get(turnodi).getCoord().second);
+            if (Game.getInstance().canMove(Settings.Directions.RIGHT)) {
+                Game.getInstance().move(Settings.Directions.RIGHT);
             }
         });
 
         bSinistra.addActionListener(e -> {
-            int turnodi = Game.getInstance().turnodi;
-            if (Game.getInstance().canMove(Game.getInstance().getPlayers().get(turnodi), Settings.Directions.LEFT)) {
-                System.out.println("il giocatore turno" + " "+ turnodi + " si trova in " + Game.getInstance().getPlayers().get(turnodi).getCoord().first + " " + Game.getInstance().getPlayers().get(turnodi).getCoord().second);
-                Game.getInstance().move(Game.getInstance().getCurrentPlayer(), Settings.Directions.LEFT);
-                System.out.println("il giocatore turno" + " "+ turnodi + " si sposta in " + Game.getInstance().getPlayers().get(turnodi).getCoord().first + " " + Game.getInstance().getPlayers().get(turnodi).getCoord().second);
+            if (Game.getInstance().canMove(Settings.Directions.LEFT)) {
+                Game.getInstance().move(Settings.Directions.LEFT);
             }
         });
 
         bWallPlace.addActionListener(e -> {
-            int turnodi = Game.getInstance().turnodi;
             Settings.Orientations orientation = rWallVert.isSelected() ? Settings.Orientations.VERTICAL : Settings.Orientations.HORIZONTAL;
             Integer x = Integer.parseInt(fWallX.getText());
             Integer y = Integer.parseInt(fWallY.getText());

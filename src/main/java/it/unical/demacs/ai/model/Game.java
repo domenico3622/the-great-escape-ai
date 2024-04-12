@@ -13,9 +13,10 @@ public class Game {
     private List<List<Directions>> wallBoardPossession;            // matrice che indica chi ha piazzato i muri
     private List<Player> players;                               // lista dei giocatori
     private Map wallsAvailable;         //per ogni giocatore indica quanti muri ha a disposizione
-
+    private int currentActivePlayer;
 
     private Game(){
+        currentActivePlayer = -1;
         players = new ArrayList<>();                            // inizializzo l'array dei giocatori
         wallBoard = new ArrayList<>();                          // inizializzo la matrice dei muri
         wallBoardPossession = new ArrayList<>();                // inizializzo la matrice che indica chi ha piazzato i muri
@@ -31,7 +32,19 @@ public class Game {
             wallBoardPossession.add(row2);
         }
     }
-    
+
+    private void chooseRandomPlayer()
+    {
+        Random random = new Random();
+        currentActivePlayer = random.nextInt(0, players.size());
+    }
+
+    public Player getCurrentPlayer() {
+        Player temp = players.get(currentActivePlayer);
+        currentActivePlayer = (currentActivePlayer + 1) % players.size();
+        return temp;
+    }
+
     /**
      * metodo per ottenere l'istanza singleton della partita
      * @return l'istanza singleton della partita
@@ -44,13 +57,20 @@ public class Game {
 
     /**
      * metodo per calcolare se un giocatore si può muovere di un passo nella direzione dir
-     * @param player il giocatore di cui si vuole controllare il movimento
      * @param dir la direzione verso cui si vuole muovere
      * @return true se il giocatore può muoversi, false altrimenti
      * @implNote richiama il metodo overload canMove, con offsetX = 0 e offsetY = 0
      */
-    public boolean canMove(Player player, Directions dir){      // metodo che dice se il giocatore passato può fare una mossa nella direzione passata
-        return canMove(player, 0, 0, dir);      // richiama il metodo overload, con offsetX = 0 e offsetY = 0
+
+     /*
+        ho fatto sì che, visto che quest overload di canMove viene chiamato dai giocatori,
+        passo solo la direzione in cui voglio andare, ma allora su chi stiamo controllando la canMove???
+        c'è una gestione interna dei turni dei giocatori, così qui gli passo il giocatore su cui dobbiamo fare il controllo.
+      */
+    public boolean canMove(Directions dir){     // metodo che dice se il giocatore passato può fare una mossa nella direzione passata
+        if (currentActivePlayer == -1)
+            chooseRandomPlayer();
+        return canMove(players.get(currentActivePlayer), 0, 0, dir);      // richiama il metodo overload, con offsetX = 0 e offsetY = 0
     }
 
     /**
@@ -77,7 +97,15 @@ public class Game {
         return cond1 && cond2 && cond3 && cond4 && (cond5 || cond6 || cond7 || cond8);
     }
 
-    public void move(Player player, Directions dir){
+
+    /*
+        qui dico semplicemente "vai in direzione X", quale giocatore dovrò spostare???
+        quello corrente. lo prelevo con getCurrentPlayer, che in automatico aggiornerà l'indice
+        del giocatore al turno successivo.
+     */
+    public void move(Directions dir)
+    {
+        Player player = getCurrentPlayer();
         if (dir == Directions.RIGHT) {
             player.setCoord(new Pair<>(player.getCoord().first, player.getCoord().second + 1));
         } else if (dir == Directions.LEFT) {
@@ -270,15 +298,4 @@ public class Game {
         return wallsAvailable;
     }
 
-    public int turnodi;
-    public void getStarterPlayer(){
-        Random rand = new Random();
-        turnodi = rand.nextInt(0,players.size());
-        System.out.println("Il giocatore che inizia è il "+ turnodi);
-    }
-    public Player getCurrentPlayer(){
-        Player temp= players.get(turnodi);
-        turnodi = (turnodi+1)%players.size();
-        return temp;
-    }
 }

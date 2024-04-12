@@ -127,7 +127,7 @@ public class GamePanel extends JPanel {
             g.setColor(Settings.dirCol.get(Settings.Directions.LEFT));
             g.drawString("" + Game.getInstance().getWallsAvailable().get(Settings.Directions.LEFT), offset - 45, offset + lineLength/2);
         }
-
+        this.repaint();
     }
 }
 
