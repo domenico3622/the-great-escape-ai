@@ -22,6 +22,9 @@ public class ControlPanel extends JPanel {
     private JButton bAvanti;
     private JButton bIndietro;
 
+    private JLabel lTurno;
+    private JLabel lAnnunci;
+
     public ControlPanel(){
         super();
         setLayout(new GridBagLayout());
@@ -43,8 +46,8 @@ public class ControlPanel extends JPanel {
 
         bWallPlace = new JButton("Place Wall");
 
-        bAvanti = new JButton(">");
-        bIndietro = new JButton("<");
+        lTurno = new JLabel("Turno");
+        lAnnunci = new JLabel("Annuncio");
 
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.HORIZONTAL;
@@ -122,11 +125,11 @@ public class ControlPanel extends JPanel {
 
         c.gridy = 13;
         c.gridx = 0;
-        c.gridwidth = 1;
-        add(bIndietro, c);
+        c.gridwidth = 3;
+        add(lTurno, c);
 
-        c.gridx = 2;
-        add(bAvanti, c);
+        c.gridy = 14;
+        add(lAnnunci, c);
 
         bSopra.addActionListener(e -> {
             if (Game.getInstance().canMove(Settings.Directions.UP)) {
@@ -169,5 +172,15 @@ public class ControlPanel extends JPanel {
                 Game.getInstance().placeWall(p, orientation, Game.getInstance().getCurrentPlayer());
             }
         });
+
+
+    }
+
+    public void setTurno(String frase){
+        lTurno.setText("Turno: " + frase);
+    }
+
+    public void setAnnuncio(String frase){
+        lAnnunci.setText("Annuncio: " + frase);
     }
 }
