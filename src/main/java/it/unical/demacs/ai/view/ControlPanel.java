@@ -131,24 +131,32 @@ public class ControlPanel extends JPanel {
         bSopra.addActionListener(e -> {
             if (Game.getInstance().canMove(Settings.Directions.UP)) {
                 Game.getInstance().move(Settings.Directions.UP);
+            } else {
+                System.out.println("hai perso");
             }
         });
 
         bSotto.addActionListener(e -> {
             if (Game.getInstance().canMove(Settings.Directions.DOWN)) {
                 Game.getInstance().move(Settings.Directions.DOWN);
+            } else {
+                System.out.println("hai perso");
             }
         });
 
         bDestra.addActionListener(e -> {
             if (Game.getInstance().canMove(Settings.Directions.RIGHT)) {
                 Game.getInstance().move(Settings.Directions.RIGHT);
+            } else {
+                System.out.println("hai perso");
             }
         });
 
         bSinistra.addActionListener(e -> {
             if (Game.getInstance().canMove(Settings.Directions.LEFT)) {
                 Game.getInstance().move(Settings.Directions.LEFT);
+            } else {
+                System.out.println("hai perso");
             }
         });
 

@@ -33,7 +33,7 @@ public class Game {
         }
     }
 
-    private void chooseRandomPlayer()
+    public void chooseRandomPlayer()
     {
         Random random = new Random();
         currentActivePlayer = random.nextInt(0, players.size());
@@ -68,8 +68,6 @@ public class Game {
         c'è una gestione interna dei turni dei giocatori, così qui gli passo il giocatore su cui dobbiamo fare il controllo.
       */
     public boolean canMove(Directions dir){     // metodo che dice se il giocatore passato può fare una mossa nella direzione passata
-        if (currentActivePlayer == -1)
-            chooseRandomPlayer();
         return canMove(players.get(currentActivePlayer), 0, 0, dir);      // richiama il metodo overload, con offsetX = 0 e offsetY = 0
     }
 
@@ -81,20 +79,24 @@ public class Game {
      * @param dir la direzione verso cui si vuole muovere
      * @return true se il giocatore può muoversi, false altrimenti
      */
-    public boolean canMove(Player player, int offsetX, int offsetY, Directions dir){                                                // metodo che inidca se posso effettuare una mossa di un giocatore, spostato di (offsetX, offsetY), nella direzione passata
+    public boolean canMove(Player player, int offsetX, int offsetY, Directions dir){                                               // metodo che inidca se posso effettuare una mossa di un giocatore, spostato di (offsetX, offsetY), nella direzione passata
         boolean cond1 = player.getCoord().first + offsetX + ((dir == Directions.RIGHT) ? 1 : 0) <= (Settings.boardDim-1);       // controllo che, il giocatore non va a destra oppure che esiste la posizione a destra (in termine di indici)
         boolean cond2 = player.getCoord().second + offsetY + ((dir == Directions.UP) ? -1 : 0) >= 0;        // controllo che, il giocatore non va su oppure che esiste la posizione su (in termine di indici)
         boolean cond3 = player.getCoord().first + offsetX + ((dir == Directions.LEFT) ? -1 : 0) >= 0;       // controllo che, il giocatore non va a sinistra oppure che esiste la posizione a sinistra (in termine di indici)
         boolean cond4 = player.getCoord().second + offsetY + ((dir == Directions.DOWN) ? 1 : 0) <= (Settings.boardDim-1);       // controllo che, il giocatore non va giù oppure che esiste la posizione giù (in termine di indici)
-        // se sto andando a destra e mi trovo sul bordo superiore o inferiore della mappa posso evitare di controllare rispettivamente il muro sopra e sotto di me. negli altri casi controllo che non ci sia un muro verticale che mi blocca
-        boolean cond5 = dir == Directions.RIGHT && (player.getCoord().second + offsetY > (Settings.boardDim-2) || wallBoard.get(player.getCoord().first + offsetX).get(player.getCoord().second + offsetY) != Orientations.VERTICAL) && (player.getCoord().second + offsetY < 1 || wallBoard.get(player.getCoord().first + offsetX).get(player.getCoord().second + offsetY-1) != Orientations.VERTICAL);
-        // se sto andando a sinistra e mi trovo sul bordo superiore o inferiore della mappa posso evitare di controllare rispettivamente il muro sopra e sotto di me. negli altri casi controllo che non ci sia un muro verticale che mi blocca
-        boolean cond6 = dir == Directions.LEFT && (player.getCoord().second + offsetY > (Settings.boardDim-2) || wallBoard.get(player.getCoord().first + offsetX-1).get(player.getCoord().second + offsetY) != Orientations.VERTICAL) && (player.getCoord().second + offsetY < 1 || wallBoard.get(player.getCoord().first + offsetX-1).get(player.getCoord().second + offsetY-1) != Orientations.VERTICAL);
-        // se sto andando su e mi trovo sul bordo destro o sinistro della mappa posso evitare di controllare rispettivamente il muro sopra e sotto di me. negli altri casi controllo che non ci sia un muro orizzontale che mi blocca
-        boolean cond7 = dir == Directions.UP && (player.getCoord().first + offsetX > (Settings.boardDim-2) || wallBoard.get(player.getCoord().first + offsetX).get(player.getCoord().second + offsetY-1) != Orientations.HORIZONTAL) && (player.getCoord().first + offsetX < 1 || wallBoard.get(player.getCoord().first + offsetX-1).get(player.getCoord().second + offsetY-1) != Orientations.HORIZONTAL);
-        // se sto andando giu e mi trovo sul bordo destro o sinistro della mappa posso evitare di controllare rispettivamente il muro sopra e sotto di me. negli altri casi controllo che non ci sia un muro orizzontale che mi blocca
-        boolean cond8 = dir == Directions.DOWN && (player.getCoord().first + offsetX > (Settings.boardDim-2) || wallBoard.get(player.getCoord().first + offsetX).get(player.getCoord().second + offsetY) != Orientations.HORIZONTAL) && (player.getCoord().first + offsetX < 1 || wallBoard.get(player.getCoord().first + offsetX-1).get(player.getCoord().second + offsetY) != Orientations.HORIZONTAL);
-        return cond1 && cond2 && cond3 && cond4 && (cond5 || cond6 || cond7 || cond8);
+        if(cond1 && cond2 && cond3 && cond4){
+
+            // se sto andando a destra e mi trovo sul bordo superiore o inferiore della mappa posso evitare di controllare rispettivamente il muro sopra e sotto di me. negli altri casi controllo che non ci sia un muro verticale che mi blocca
+            boolean cond5 = dir == Directions.RIGHT && (player.getCoord().second + offsetY > (Settings.boardDim-2) || wallBoard.get(player.getCoord().first + offsetX).get(player.getCoord().second + offsetY) != Orientations.VERTICAL) && (player.getCoord().second + offsetY < 1 || wallBoard.get(player.getCoord().first + offsetX).get(player.getCoord().second + offsetY-1) != Orientations.VERTICAL);
+            // se sto andando a sinistra e mi trovo sul bordo superiore o inferiore della mappa posso evitare di controllare rispettivamente il muro sopra e sotto di me. negli altri casi controllo che non ci sia un muro verticale che mi blocca
+            boolean cond6 = dir == Directions.LEFT && (player.getCoord().second + offsetY > (Settings.boardDim-2) || wallBoard.get(player.getCoord().first + offsetX-1).get(player.getCoord().second + offsetY) != Orientations.VERTICAL) && (player.getCoord().second + offsetY < 1 || wallBoard.get(player.getCoord().first + offsetX-1).get(player.getCoord().second + offsetY-1) != Orientations.VERTICAL);
+            // se sto andando su e mi trovo sul bordo destro o sinistro della mappa posso evitare di controllare rispettivamente il muro sopra e sotto di me. negli altri casi controllo che non ci sia un muro orizzontale che mi blocca
+            boolean cond7 = dir == Directions.UP && (player.getCoord().first + offsetX > (Settings.boardDim-2) || wallBoard.get(player.getCoord().first + offsetX).get(player.getCoord().second + offsetY-1) != Orientations.HORIZONTAL) && (player.getCoord().first + offsetX < 1 || wallBoard.get(player.getCoord().first + offsetX-1).get(player.getCoord().second + offsetY-1) != Orientations.HORIZONTAL);
+            // se sto andando giu e mi trovo sul bordo destro o sinistro della mappa posso evitare di controllare rispettivamente il muro sopra e sotto di me. negli altri casi controllo che non ci sia un muro orizzontale che mi blocca
+            boolean cond8 = dir == Directions.DOWN && (player.getCoord().first + offsetX > (Settings.boardDim-2) || wallBoard.get(player.getCoord().first + offsetX).get(player.getCoord().second + offsetY) != Orientations.HORIZONTAL) && (player.getCoord().first + offsetX < 1 || wallBoard.get(player.getCoord().first + offsetX-1).get(player.getCoord().second + offsetY) != Orientations.HORIZONTAL);
+            return cond1 && cond2 && cond3 && cond4 && (cond5 || cond6 || cond7 || cond8);
+        }
+        return false;
     }
 
 
@@ -107,13 +109,13 @@ public class Game {
     {
         Player player = getCurrentPlayer();
         if (dir == Directions.RIGHT) {
-            player.setCoord(new Pair<>(player.getCoord().first, player.getCoord().second + 1));
-        } else if (dir == Directions.LEFT) {
-            player.setCoord(new Pair<>(player.getCoord().first, player.getCoord().second - 1));
-        } else if (dir == Directions.UP) {
-            player.setCoord(new Pair<>(player.getCoord().first - 1, player.getCoord().second));
-        } else if (dir == Directions.DOWN) {
             player.setCoord(new Pair<>(player.getCoord().first + 1, player.getCoord().second));
+        } else if (dir == Directions.LEFT) {
+            player.setCoord(new Pair<>(player.getCoord().first - 1, player.getCoord().second));
+        } else if (dir == Directions.UP) {
+            player.setCoord(new Pair<>(player.getCoord().first, player.getCoord().second - 1));
+        } else if (dir == Directions.DOWN) {
+            player.setCoord(new Pair<>(player.getCoord().first, player.getCoord().second + 1));
         }
     }
 

@@ -80,7 +80,7 @@ public class GamePanel extends JPanel {
         // Draw the players
         for (Player p : Game.getInstance().getPlayers()) {
             if (Settings.dirCol.containsKey(p.getDirection())) {
-                g.drawImage(dirImg.get(p.getDirection()), p.getCoord().second * cellSize + offset, p.getCoord().first * cellSize + offset, null);
+                g.drawImage(dirImg.get(p.getDirection()), p.getCoord().first * cellSize + offset, p.getCoord().second * cellSize + offset, null);
             }
         }
 
