@@ -190,23 +190,27 @@ public class Game {
         } else if (player.getCoord().first + offsetX < 0 || player.getCoord().first + offsetX > (Settings.boardDim-1) || player.getCoord().second + offsetY < 0 || player.getCoord().second + offsetY > (Settings.boardDim-1)){
             return false;
         } else if (canBeReached.get(player.getCoord().first + offsetX).get(player.getCoord().second + offsetY) != 0) {
-            return canBeReached.get(player.getCoord().first + offsetX).get(player.getCoord().second + offsetY) == 1;
+            return canBeReached.get(player.getCoord().first + offsetX).get(player.getCoord().second + offsetY) > 0;
         } else {
             canBeReached.get(player.getCoord().first + offsetX).set(player.getCoord().second + offsetY, -1);
+            List<Integer> possible = new ArrayList<>();
             if(canGoPlayersImpl(player, offsetX+1, offsetY, canBeReached) && canMove(player, offsetX, offsetY, Directions.RIGHT)){
-                canBeReached.get(player.getCoord().first + offsetX).set(player.getCoord().second + offsetY, 1);
-                return true;
-            } else if (canGoPlayersImpl(player, offsetX-1, offsetY, canBeReached) && canMove(player, offsetX, offsetY, Directions.LEFT)){
-                canBeReached.get(player.getCoord().first + offsetX).set(player.getCoord().second + offsetY, 1);
-                return true;
-            } else if (canGoPlayersImpl(player, offsetX, offsetY+1, canBeReached) && canMove(player, offsetX, offsetY, Directions.DOWN)){
-                canBeReached.get(player.getCoord().first + offsetX).set(player.getCoord().second + offsetY, 1);
-                return true;
-            } else if (canGoPlayersImpl(player, offsetX, offsetY-1, canBeReached) && canMove(player, offsetX, offsetY, Directions.UP)){
-                canBeReached.get(player.getCoord().first + offsetX).set(player.getCoord().second + offsetY, 1);
+                possible.add(canBeReached.get(player.getCoord().first + offsetX+1).get(player.getCoord().second + offsetY));
+            }
+            if (canGoPlayersImpl(player, offsetX-1, offsetY, canBeReached) && canMove(player, offsetX, offsetY, Directions.LEFT)){
+                possible.add(canBeReached.get(player.getCoord().first + offsetX-1).get(player.getCoord().second + offsetY));
+            }
+            if (canGoPlayersImpl(player, offsetX, offsetY+1, canBeReached) && canMove(player, offsetX, offsetY, Directions.DOWN)){
+                possible.add(canBeReached.get(player.getCoord().first + offsetX).get(player.getCoord().second + offsetY+1));
+            }
+            if (canGoPlayersImpl(player, offsetX, offsetY-1, canBeReached) && canMove(player, offsetX, offsetY, Directions.UP)){
+                possible.add(canBeReached.get(player.getCoord().first + offsetX).get(player.getCoord().second + offsetY-1));
+            }
+            if(possible.size() > 0){
+                canBeReached.get(player.getCoord().first + offsetX).set(player.getCoord().second + offsetY, Collections.min(possible) + 1);
                 return true;
             } else {
-                canBeReached.get(player.getCoord().first + offsetX).set(player.getCoord().second + offsetY, 2);
+                canBeReached.get(player.getCoord().first + offsetX).set(player.getCoord().second + offsetY, -1);
                 return false;
             }
         }
