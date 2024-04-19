@@ -2,7 +2,7 @@ package it.unical.demacs.ai.model;
 
 import it.unical.demacs.ai.model.Settings.Directions;
 import it.unical.demacs.ai.model.Settings.Orientations;
-import it.unical.demacs.ai.utils.Pair;
+import it.unical.demacs.ai.utils.Coordinates;
 
 import java.util.*;
 
@@ -17,9 +17,9 @@ public class Game {
         currentActivePlayer = -1;
         players = new ArrayList<>();                            // inizializzo l'array dei giocatori
         wallBoard = new ArrayList<>();                          // inizializzo la matrice dei muri
-        for(int i = 0; i < (Settings.boardDim-1); i++){
+        for(int rowIndex = 0; rowIndex < (Settings.boardDim-1); rowIndex++){
             List<Wall> row = new ArrayList<>();
-            for(int j = 0; j < (Settings.boardDim-1); j++){
+            for(int columnIndex = 0; columnIndex < (Settings.boardDim-1); columnIndex++){
                 row.add(new Wall());
             }
             wallBoard.add(row);
@@ -65,35 +65,34 @@ public class Game {
      * metodo per calcolare se il giocatore attivo si può muovere di un passo nella direzione dir
      * @param dir la direzione verso cui si vuole muovere
      * @return true se il giocatore può muoversi, false altrimenti
-     * @implNote richiama il metodo overload canMove, con offsetX = 0 e offsetY = 0
+     * @implNote richiama il metodo overload canMove, con offsetColumn = 0 e offsetRow = 0
      */
      public boolean canMove(Directions dir){     // metodo che dice se il giocatore passato può fare una mossa nella direzione passata
-        return canMove(players.get(currentActivePlayer), 0, 0, dir);      // richiama il metodo overload, con offsetX = 0 e offsetY = 0
+        return canMove(players.get(currentActivePlayer), 0, 0, dir);      // richiama il metodo overload, con offsetColumn = 0 e offsetRow = 0
     }
 
     /**
      * metodo per calcolare se un giocatore si può muovere di un passo nella direzione dir
      * @param player il giocatore di cui si vuole controllare il movimento
-     * @param offsetX spostamento lungo la x ddel giocatore, per simulare la sua posizione in una cella diversa da quella in cui si trova
-     * @param offsetY spostamento lungo le y del giocatore, per simulare la sua posizione in una cella diversa da quella in cui si trova
+     * @param offsetColumn spostamento lungo la x ddel giocatore, per simulare la sua posizione in una cella diversa da quella in cui si trova
+     * @param offsetRow spostamento lungo le y del giocatore, per simulare la sua posizione in una cella diversa da quella in cui si trova
      * @param dir la direzione verso cui si vuole muovere
      * @return true se il giocatore può muoversi, false altrimenti
      */
-    public boolean canMove(Player player, int offsetX, int offsetY, Directions dir){                                               // metodo che inidca se posso effettuare una mossa di un giocatore, spostato di (offsetX, offsetY), nella direzione passata
-        boolean cond1 = player.getCoord().first + offsetX + ((dir == Directions.RIGHT) ? 1 : 0) <= (Settings.boardDim-1);       // controllo che, il giocatore non va a destra oppure che esiste la posizione a destra (in termine di indici)
-        boolean cond2 = player.getCoord().second + offsetY + ((dir == Directions.UP) ? -1 : 0) >= 0;        // controllo che, il giocatore non va su oppure che esiste la posizione su (in termine di indici)
-        boolean cond3 = player.getCoord().first + offsetX + ((dir == Directions.LEFT) ? -1 : 0) >= 0;       // controllo che, il giocatore non va a sinistra oppure che esiste la posizione a sinistra (in termine di indici)
-        boolean cond4 = player.getCoord().second + offsetY + ((dir == Directions.DOWN) ? 1 : 0) <= (Settings.boardDim-1);       // controllo che, il giocatore non va giù oppure che esiste la posizione giù (in termine di indici)
+    public boolean canMove(Player player, int offsetColumn, int offsetRow, Directions dir){                                               // metodo che inidca se posso effettuare una mossa di un giocatore, spostato di (offsetColumn, offsetRow), nella direzione passata
+        boolean cond1 = player.getCoord().column + offsetColumn + ((dir == Directions.RIGHT) ? 1 : 0) <= (Settings.boardDim-1);       // controllo che, il giocatore non va a destra oppure che esiste la posizione a destra (in termine di indici)
+        boolean cond2 = player.getCoord().row + offsetRow + ((dir == Directions.UP) ? -1 : 0) >= 0;        // controllo che, il giocatore non va su oppure che esiste la posizione su (in termine di indici)
+        boolean cond3 = player.getCoord().column + offsetColumn + ((dir == Directions.LEFT) ? -1 : 0) >= 0;       // controllo che, il giocatore non va a sinistra oppure che esiste la posizione a sinistra (in termine di indici)
+        boolean cond4 = player.getCoord().row + offsetRow + ((dir == Directions.DOWN) ? 1 : 0) <= (Settings.boardDim-1);       // controllo che, il giocatore non va giù oppure che esiste la posizione giù (in termine di indici)
         if(cond1 && cond2 && cond3 && cond4){
-
             // se sto andando a destra e mi trovo sul bordo superiore o inferiore della mappa posso evitare di controllare rispettivamente il muro sopra e sotto di me. negli altri casi controllo che non ci sia un muro verticale che mi blocca
-            boolean cond5 = dir == Directions.RIGHT && (player.getCoord().second + offsetY > (Settings.boardDim-2) || wallBoard.get(player.getCoord().first + offsetX).get(player.getCoord().second + offsetY).getOrientation() != Orientations.VERTICAL) && (player.getCoord().second + offsetY < 1 || wallBoard.get(player.getCoord().first + offsetX).get(player.getCoord().second + offsetY-1).getOrientation() != Orientations.VERTICAL);
+            boolean cond5 = dir == Directions.RIGHT && (player.getCoord().row + offsetRow > (Settings.boardDim-2) || wallBoard.get(player.getCoord().row + offsetRow).get(player.getCoord().column + offsetColumn).getOrientation() != Orientations.VERTICAL) && (player.getCoord().row + offsetRow < 1 || wallBoard.get(player.getCoord().row + offsetRow-1).get(player.getCoord().column + offsetColumn).getOrientation() != Orientations.VERTICAL);
             // se sto andando a sinistra e mi trovo sul bordo superiore o inferiore della mappa posso evitare di controllare rispettivamente il muro sopra e sotto di me. negli altri casi controllo che non ci sia un muro verticale che mi blocca
-            boolean cond6 = dir == Directions.LEFT && (player.getCoord().second + offsetY > (Settings.boardDim-2) || wallBoard.get(player.getCoord().first + offsetX-1).get(player.getCoord().second + offsetY).getOrientation() != Orientations.VERTICAL) && (player.getCoord().second + offsetY < 1 || wallBoard.get(player.getCoord().first + offsetX-1).get(player.getCoord().second + offsetY-1).getOrientation() != Orientations.VERTICAL);
+            boolean cond6 = dir == Directions.LEFT && (player.getCoord().row + offsetRow > (Settings.boardDim-2) || wallBoard.get(player.getCoord().row + offsetRow).get(player.getCoord().column + offsetColumn-1).getOrientation() != Orientations.VERTICAL) && (player.getCoord().row + offsetRow < 1 || wallBoard.get(player.getCoord().row + offsetRow-1).get(player.getCoord().column + offsetColumn-1).getOrientation() != Orientations.VERTICAL);
             // se sto andando su e mi trovo sul bordo destro o sinistro della mappa posso evitare di controllare rispettivamente il muro sopra e sotto di me. negli altri casi controllo che non ci sia un muro orizzontale che mi blocca
-            boolean cond7 = dir == Directions.UP && (player.getCoord().first + offsetX > (Settings.boardDim-2) || wallBoard.get(player.getCoord().first + offsetX).get(player.getCoord().second + offsetY-1).getOrientation() != Orientations.HORIZONTAL) && (player.getCoord().first + offsetX < 1 || wallBoard.get(player.getCoord().first + offsetX-1).get(player.getCoord().second + offsetY-1).getOrientation() != Orientations.HORIZONTAL);
+            boolean cond7 = dir == Directions.UP && (player.getCoord().column + offsetColumn > (Settings.boardDim-2) || wallBoard.get(player.getCoord().row + offsetRow-1).get(player.getCoord().column + offsetColumn).getOrientation() != Orientations.HORIZONTAL) && (player.getCoord().column + offsetColumn < 1 || wallBoard.get(player.getCoord().row + offsetRow-1).get(player.getCoord().column + offsetColumn-1).getOrientation() != Orientations.HORIZONTAL);
             // se sto andando giu e mi trovo sul bordo destro o sinistro della mappa posso evitare di controllare rispettivamente il muro sopra e sotto di me. negli altri casi controllo che non ci sia un muro orizzontale che mi blocca
-            boolean cond8 = dir == Directions.DOWN && (player.getCoord().first + offsetX > (Settings.boardDim-2) || wallBoard.get(player.getCoord().first + offsetX).get(player.getCoord().second + offsetY).getOrientation() != Orientations.HORIZONTAL) && (player.getCoord().first + offsetX < 1 || wallBoard.get(player.getCoord().first + offsetX-1).get(player.getCoord().second + offsetY).getOrientation() != Orientations.HORIZONTAL);
+            boolean cond8 = dir == Directions.DOWN && (player.getCoord().column + offsetColumn > (Settings.boardDim-2) || wallBoard.get(player.getCoord().row + offsetRow).get(player.getCoord().column + offsetColumn).getOrientation() != Orientations.HORIZONTAL) && (player.getCoord().column + offsetColumn < 1 || wallBoard.get(player.getCoord().row + offsetRow).get(player.getCoord().column + offsetColumn-1).getOrientation() != Orientations.HORIZONTAL);
             return cond1 && cond2 && cond3 && cond4 && (cond5 || cond6 || cond7 || cond8);
         }
         return false;
@@ -108,13 +107,13 @@ public class Game {
     {
         Player player = getCurrentPlayer();
         if (dir == Directions.RIGHT) {
-            player.setCoord(new Pair<>(player.getCoord().first + 1, player.getCoord().second));
+            player.setCoord(new Coordinates(player.getCoord().row, player.getCoord().column + 1));
         } else if (dir == Directions.LEFT) {
-            player.setCoord(new Pair<>(player.getCoord().first - 1, player.getCoord().second));
+            player.setCoord(new Coordinates(player.getCoord().row, player.getCoord().column - 1));
         } else if (dir == Directions.UP) {
-            player.setCoord(new Pair<>(player.getCoord().first, player.getCoord().second - 1));
+            player.setCoord(new Coordinates(player.getCoord().row - 1, player.getCoord().column));
         } else if (dir == Directions.DOWN) {
-            player.setCoord(new Pair<>(player.getCoord().first, player.getCoord().second + 1));
+            player.setCoord(new Coordinates(player.getCoord().row + 1, player.getCoord().column));
         }
     }
 
@@ -124,17 +123,17 @@ public class Game {
      * @param orientation orientamento del muro da aggiungere
      * @return true se il muro si può aggiungere, false altrimenti
      */
-    public boolean canPlaceWall(Pair<Integer, Integer> pos, Orientations orientation, Player player){
+    public boolean canPlaceWall(Coordinates pos, Orientations orientation, Player player){
         // controllo che il giocatore abbia ancora muri disponibili
         if(player.getWallsAvailable() < 1){
             return false;
         }
         // controllo che le coordinate in cui voglio piazzare il muro siano valide e non sia stato ancora piazzato un muro
-        if(pos.first >= 0 && pos.first < (Settings.boardDim-1) && pos.second >= 0 && pos.second < (Settings.boardDim-1) && wallBoard.get(pos.first).get(pos.second).getOrientation() == Orientations.VOID){
+        if(pos.column >= 0 && pos.column < (Settings.boardDim-1) && pos.row >= 0 && pos.row < (Settings.boardDim-1) && wallBoard.get(pos.column).get(pos.row).getOrientation() == Orientations.VOID){
             // logicamente se voglio piazzare un muro in 0,0 non devo controllare se sopra di me ci sono altri muri.
             // in caso contrario, controllo che non ci siano muri che si intersecano. successivamente avrò bisogno di piazzare
             // temporaneamente il muro per capire se questo chiude qualche giocatore.
-            if((pos.first-1 < 0 || wallBoard.get(pos.first-1).get(pos.second).getOrientation() != Orientations.HORIZONTAL || orientation != Orientations.HORIZONTAL) && (pos.first+1 > (Settings.boardDim-2) || wallBoard.get(pos.first+1).get(pos.second).getOrientation() != Orientations.HORIZONTAL || orientation != Orientations.HORIZONTAL) && (pos.second-1 < 0 || wallBoard.get(pos.first).get(pos.second-1).getOrientation() != Orientations.VERTICAL || orientation != Orientations.VERTICAL) && (pos.second+1 > (Settings.boardDim-2) || wallBoard.get(pos.first).get(pos.second+1).getOrientation() != Orientations.VERTICAL || orientation != Orientations.VERTICAL)){
+            if((pos.column-1 < 0 || wallBoard.get(pos.column-1).get(pos.row).getOrientation() != Orientations.HORIZONTAL || orientation != Orientations.HORIZONTAL) && (pos.column+1 > (Settings.boardDim-2) || wallBoard.get(pos.column+1).get(pos.row).getOrientation() != Orientations.HORIZONTAL || orientation != Orientations.HORIZONTAL) && (pos.row-1 < 0 || wallBoard.get(pos.column).get(pos.row-1).getOrientation() != Orientations.VERTICAL || orientation != Orientations.VERTICAL) && (pos.row+1 > (Settings.boardDim-2) || wallBoard.get(pos.column).get(pos.row+1).getOrientation() != Orientations.VERTICAL || orientation != Orientations.VERTICAL)){
                 game.placeWall(pos, orientation, player);
                 boolean ret = canGoPlayers();
                 game.placeWall(pos, Orientations.VOID, player);
@@ -160,6 +159,13 @@ public class Game {
                 canBeReached.add(row);
             }
             canGo = canGo && canGoPlayersImpl(player, 0, 0, canBeReached);
+            for (int i = 0; i < Settings.boardDim; i++){
+                for (int j = 0; j < Settings.boardDim; j++){
+                    System.out.print(canBeReached.get(i).get(j) + " ");
+                }
+                System.out.println();
+            }
+            System.out.println();
         }
         return canGo;
     }
@@ -167,39 +173,39 @@ public class Game {
     /**
      * metodo che calcola se un giocatore può raggiungere una posizione vincente
      * @param player giocatore di cui si vuole calcolare se può vincere
-     * @param offsetX spostamento lungo la x ddel giocatore, per simulare la sua posizione in una cella diversa da quella in cui si trova
-     * @param offsetY spostamento lungo le y del giocatore, per simulare la sua posizione in una cella diversa da quella in cui si trova
+     * @param offsetColumn spostamento lungo la x ddel giocatore, per simulare la sua posizione in una cella diversa da quella in cui si trova
+     * @param offsetRow spostamento lungo le y del giocatore, per simulare la sua posizione in una cella diversa da quella in cui si trova
      * @param canBeReached matrice che contiene 1 se è una posizione vincente, false altrimenti
      * @return true se il giocatore passato può raggiungere la destinazione, false altrimenti
      */
-    private boolean canGoPlayersImpl(Player player, int offsetX, int offsetY, List<List<Integer>> canBeReached){
-        if(winPosition(player, offsetX, offsetY)) {
-            canBeReached.get(player.getCoord().first + offsetX).set(player.getCoord().second + offsetY, 1);
-            return true;
-        } else if (player.getCoord().first + offsetX < 0 || player.getCoord().first + offsetX > (Settings.boardDim-1) || player.getCoord().second + offsetY < 0 || player.getCoord().second + offsetY > (Settings.boardDim-1)){
+    private boolean canGoPlayersImpl(Player player, int offsetColumn, int offsetRow, List<List<Integer>> canBeReached){
+        if ((player.getCoord().column + offsetColumn) < 0 || (player.getCoord().column + offsetColumn) > (Settings.boardDim-1) || (player.getCoord().row + offsetRow) < 0 || (player.getCoord().row + offsetRow) > (Settings.boardDim-1)){
             return false;
-        } else if (canBeReached.get(player.getCoord().first + offsetX).get(player.getCoord().second + offsetY) != 0) {
-            return canBeReached.get(player.getCoord().first + offsetX).get(player.getCoord().second + offsetY) > 0;
+        } else if(winPosition(player, offsetColumn, offsetRow)) {
+            canBeReached.get(player.getCoord().column + offsetColumn).set(player.getCoord().row + offsetRow, 1);
+            return true;
+        }  else if (canBeReached.get(player.getCoord().column + offsetColumn).get(player.getCoord().row + offsetRow) != 0) {
+            return canBeReached.get(player.getCoord().column + offsetColumn).get(player.getCoord().row + offsetRow) > 0;
         } else {
-            canBeReached.get(player.getCoord().first + offsetX).set(player.getCoord().second + offsetY, -1);
+            canBeReached.get(player.getCoord().column + offsetColumn).set(player.getCoord().row + offsetRow, -1);
             List<Integer> possible = new ArrayList<>();
-            if(canGoPlayersImpl(player, offsetX+1, offsetY, canBeReached) && canMove(player, offsetX, offsetY, Directions.RIGHT)){
-                possible.add(canBeReached.get(player.getCoord().first + offsetX+1).get(player.getCoord().second + offsetY));
+            if(canGoPlayersImpl(player, offsetColumn, offsetRow+1, canBeReached) && canMove(player, offsetColumn, offsetRow, Directions.DOWN)){
+                possible.add(canBeReached.get(player.getCoord().column + offsetColumn).get(player.getCoord().row + offsetRow + 1));
             }
-            if (canGoPlayersImpl(player, offsetX-1, offsetY, canBeReached) && canMove(player, offsetX, offsetY, Directions.LEFT)){
-                possible.add(canBeReached.get(player.getCoord().first + offsetX-1).get(player.getCoord().second + offsetY));
+            if (canGoPlayersImpl(player, offsetColumn, offsetRow-1, canBeReached) && canMove(player, offsetColumn, offsetRow, Directions.UP)){
+                possible.add(canBeReached.get(player.getCoord().column + offsetColumn).get(player.getCoord().row + offsetRow - 1));
             }
-            if (canGoPlayersImpl(player, offsetX, offsetY+1, canBeReached) && canMove(player, offsetX, offsetY, Directions.DOWN)){
-                possible.add(canBeReached.get(player.getCoord().first + offsetX).get(player.getCoord().second + offsetY+1));
+            if (canGoPlayersImpl(player, offsetColumn, offsetRow, canBeReached) && canMove(player, offsetColumn, offsetRow, Directions.RIGHT)){
+                possible.add(canBeReached.get(player.getCoord().column + offsetColumn + 1).get(player.getCoord().row + offsetRow));
             }
-            if (canGoPlayersImpl(player, offsetX, offsetY-1, canBeReached) && canMove(player, offsetX, offsetY, Directions.UP)){
-                possible.add(canBeReached.get(player.getCoord().first + offsetX).get(player.getCoord().second + offsetY-1));
+            if (canGoPlayersImpl(player, offsetColumn-1, offsetRow, canBeReached) && canMove(player, offsetColumn, offsetRow, Directions.LEFT)){
+                possible.add(canBeReached.get(player.getCoord().column + offsetColumn - 1).get(player.getCoord().row + offsetRow));
             }
             if(possible.size() > 0){
-                canBeReached.get(player.getCoord().first + offsetX).set(player.getCoord().second + offsetY, Collections.min(possible) + 1);
+                canBeReached.get(player.getCoord().column + offsetColumn).set(player.getCoord().row + offsetRow, Collections.min(possible) + 1);
                 return true;
             } else {
-                canBeReached.get(player.getCoord().first + offsetX).set(player.getCoord().second + offsetY, -1);
+                canBeReached.get(player.getCoord().column + offsetColumn).set(player.getCoord().row + offsetRow, -1);
                 return false;
             }
         }
@@ -208,18 +214,18 @@ public class Game {
     /**
      * metodo per calcolare se un giocatore si trova su una posizione vincente
      * @param player giocatore di cui si vuole conoscere la posizione
-     * @param offsetX spostamento lungo la x di un giocatore, per simulare la sua posizione in una cella diversa da quella in cui si trova
-     * @param offsetY spostamento lungo la y di un giocatore, per simulare la sua posizione in una cella diversa da quella in cui si trova
+     * @param offsetColumn spostamento lungo la x di un giocatore, per simulare la sua posizione in una cella diversa da quella in cui si trova
+     * @param offsetRow spostamento lungo la y di un giocatore, per simulare la sua posizione in una cella diversa da quella in cui si trova
      * @return true se il giocatore si trova su una posizione vincente, false altrimenti
      */
-    public boolean winPosition(Player player, int offsetX, int offsetY){
-        if(player.getDirection() == Directions.RIGHT && player.getCoord().first + offsetX == (Settings.boardDim-1))
+    public boolean winPosition(Player player, int offsetColumn, int offsetRow){
+        if(player.getDirection() == Directions.RIGHT && player.getCoord().column + offsetColumn == (Settings.boardDim-1))
             return true;
-        if(player.getDirection() == Directions.LEFT && player.getCoord().first + offsetX == 0)
+        if(player.getDirection() == Directions.LEFT && player.getCoord().column + offsetColumn == 0)
             return true;
-        if(player.getDirection() == Directions.UP && player.getCoord().second + offsetY == 0)
+        if(player.getDirection() == Directions.UP && player.getCoord().row + offsetRow == 0)
             return true;
-        if(player.getDirection() == Directions.DOWN && player.getCoord().second + offsetY == (Settings.boardDim-1))
+        if(player.getDirection() == Directions.DOWN && player.getCoord().row + offsetRow == (Settings.boardDim-1))
             return true;
         return false;
     }
@@ -240,12 +246,12 @@ public class Game {
      * @implNote attenzione! non controlla che il muro sia posizionabile, lo aggiunge e basta.
      * @implNote se nella stessa posizione è già presente un muro, lo sovrascrive
      */
-    public void placeWall(Pair<Integer, Integer> pos, Orientations orientation, Player player){
+    public void placeWall(Coordinates pos, Orientations orientation, Player player){
         if (orientation == Orientations.VOID) {
-            wallBoard.get(pos.first).set(pos.second, new Wall());
+            wallBoard.get(pos.row).set(pos.column, new Wall());
             return;
         }
-        wallBoard.get(pos.first).set(pos.second, new Wall(orientation, player.getDirection()));
+        wallBoard.get(pos.row).set(pos.column, new Wall(orientation, player));
         player.setWallsAvailable(player.getWallsAvailable()-1);
     }
 

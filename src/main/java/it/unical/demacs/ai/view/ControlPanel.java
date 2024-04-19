@@ -2,7 +2,7 @@ package it.unical.demacs.ai.view;
 
 import it.unical.demacs.ai.model.Game;
 import it.unical.demacs.ai.model.Settings;
-import it.unical.demacs.ai.utils.Pair;
+import it.unical.demacs.ai.utils.Coordinates;
 
 import javax.swing.*;
 import java.awt.*;
@@ -91,14 +91,14 @@ public class ControlPanel extends JPanel {
 
         c.gridy = 8;
         c.gridwidth = 1;
-        add(new JLabel("X"), c);
+        add(new JLabel("Row"), c);
 
         c.gridx = 1;
         add(fWallX, c);
 
         c.gridy = 9;
         c.gridx = 0;
-        add(new JLabel("Y"), c);
+        add(new JLabel("Column"), c);
 
         c.gridx = 1;
         add(fWallY, c);
@@ -166,9 +166,9 @@ public class ControlPanel extends JPanel {
 
         bWallPlace.addActionListener(e -> {
             Settings.Orientations orientation = rWallVert.isSelected() ? Settings.Orientations.VERTICAL : Settings.Orientations.HORIZONTAL;
-            Integer x = Integer.parseInt(fWallX.getText());
-            Integer y = Integer.parseInt(fWallY.getText());
-            Pair<Integer, Integer> p = new Pair<>(y, x);  //LI HO INVERTITI PERCHE LE POSIZIONI DEI MURI VANNO AL CONTRARIO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            Integer row = Integer.parseInt(fWallX.getText());
+            Integer column = Integer.parseInt(fWallY.getText());
+            Coordinates p = new Coordinates(row, column);
             if (Game.getInstance().canPlaceWall(p, orientation, Game.getInstance().getCurrentPlayer())) {
                 Game.getInstance().placeWall(p, orientation, Game.getInstance().getCurrentPlayer());
                 Game.getInstance().nextTurn();

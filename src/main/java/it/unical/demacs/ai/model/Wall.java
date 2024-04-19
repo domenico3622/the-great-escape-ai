@@ -2,14 +2,14 @@ package it.unical.demacs.ai.model;
 
 public class Wall {
     private Settings.Orientations orientation;
-    private Settings.Directions owner;
+    private Player owner;
 
     public Wall(){
         orientation = Settings.Orientations.VOID;
-        owner = Settings.Directions.VOID;
+        owner = null;
     }
 
-    public Wall(Settings.Orientations _orientation, Settings.Directions _owner){
+    public Wall(Settings.Orientations _orientation, Player _owner){
         orientation = _orientation;
         owner = _owner;
     }
@@ -18,7 +18,7 @@ public class Wall {
         return orientation;
     }
 
-    public Settings.Directions getOwner() {
+    public Player getOwner() {
         return owner;
     }
 
@@ -26,7 +26,7 @@ public class Wall {
         this.orientation = orientation;
     }
 
-    public void setOwner(Settings.Directions owner) {
+    public void setOwner(Player owner) {
         this.owner = owner;
     }
 

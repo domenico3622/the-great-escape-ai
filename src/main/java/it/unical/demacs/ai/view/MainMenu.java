@@ -3,7 +3,7 @@ package it.unical.demacs.ai.view;
 import it.unical.demacs.ai.model.Game;
 import it.unical.demacs.ai.model.Player;
 import it.unical.demacs.ai.model.Settings;
-import it.unical.demacs.ai.utils.Pair;
+import it.unical.demacs.ai.utils.Coordinates;
 
 import javax.swing.*;
 import java.awt.*;
@@ -160,27 +160,19 @@ public class MainMenu extends JPanel{
             Map<Settings.Directions, Integer> wallsAvailable = new HashMap<>();
             Random Random = new Random();
             if (NPlayer.getSelectedItem() != null) {
-                Game.getInstance().addPlayer(new Player(new Pair<>(Random.nextInt(0, Settings.boardDim), 0), Settings.Directions.DOWN));
-                Settings.dirCol.put(Settings.Directions.DOWN, icons[NPlayer.getSelectedIndex()].color);
-                Settings.dirPath.put(Settings.Directions.DOWN, icons[NPlayer.getSelectedIndex()].getResourceName());
+                Game.getInstance().addPlayer(new Player(new Coordinates(0, Random.nextInt(0, Settings.boardDim)), Settings.Directions.DOWN, icons[NPlayer.getSelectedIndex()].color, icons[NPlayer.getSelectedIndex()].getResourceName()));
                 wallsAvailable.put(Settings.Directions.DOWN, sliderWalls.getValue());
             }
             if (SPlayer.getSelectedItem() != null) {
-                Game.getInstance().addPlayer(new Player(new Pair<>(Random.nextInt(0, Settings.boardDim), Settings.boardDim - 1), Settings.Directions.UP));
-                Settings.dirCol.put(Settings.Directions.UP, icons[SPlayer.getSelectedIndex()].color);
-                Settings.dirPath.put(Settings.Directions.UP, icons[SPlayer.getSelectedIndex()].getResourceName());
+                Game.getInstance().addPlayer(new Player(new Coordinates(Settings.boardDim - 1, Random.nextInt(0, Settings.boardDim)), Settings.Directions.UP, icons[SPlayer.getSelectedIndex()].color, icons[SPlayer.getSelectedIndex()].getResourceName()));
                 wallsAvailable.put(Settings.Directions.UP, sliderWalls.getValue());
             }
             if (EPlayer.getSelectedItem() != null) {
-                Game.getInstance().addPlayer(new Player(new Pair<>(Settings.boardDim - 1, Random.nextInt(0, Settings.boardDim)), Settings.Directions.LEFT));
-                Settings.dirCol.put(Settings.Directions.LEFT, icons[EPlayer.getSelectedIndex()].color);
-                Settings.dirPath.put(Settings.Directions.LEFT, icons[EPlayer.getSelectedIndex()].getResourceName());
+                Game.getInstance().addPlayer(new Player(new Coordinates(Random.nextInt(0, Settings.boardDim), Settings.boardDim - 1), Settings.Directions.LEFT, icons[EPlayer.getSelectedIndex()].color, icons[EPlayer.getSelectedIndex()].getResourceName()));
                 wallsAvailable.put(Settings.Directions.LEFT, sliderWalls.getValue());
             }
             if (WPlayer.getSelectedItem() != null) {
-                Game.getInstance().addPlayer(new Player(new Pair<>(0, Random.nextInt(0, Settings.boardDim)), Settings.Directions.RIGHT));
-                Settings.dirCol.put(Settings.Directions.RIGHT, icons[WPlayer.getSelectedIndex()].color);
-                Settings.dirPath.put(Settings.Directions.RIGHT, icons[WPlayer.getSelectedIndex()].getResourceName());
+                Game.getInstance().addPlayer(new Player(new Coordinates(Random.nextInt(0, Settings.boardDim), 0), Settings.Directions.RIGHT, icons[WPlayer.getSelectedIndex()].color, icons[WPlayer.getSelectedIndex()].getResourceName()));
                 wallsAvailable.put(Settings.Directions.RIGHT, sliderWalls.getValue());
             }
 

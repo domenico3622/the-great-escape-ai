@@ -1,23 +1,30 @@
 package it.unical.demacs.ai.model;
 
+import java.awt.Color;
+
 import it.unical.demacs.ai.model.Settings.Directions;
-import it.unical.demacs.ai.utils.Pair;
+import it.unical.demacs.ai.utils.Coordinates;
 
 public class Player
 {
-    private Pair<Integer, Integer> coord;
+    private Coordinates coord;
     private Directions goalDir;
     private int wallsAvailable;
+    private Color color;
+    private String dirPath;
 
-    public Player(Pair<Integer, Integer> _coord, Directions _goalDir){
+    public Player(Coordinates _coord, Directions _goalDir, Color _color, String _dirPath){
         coord = _coord;
         goalDir = _goalDir;
+        wallsAvailable = 10;
+        color = _color;
+        dirPath = _dirPath;
     }
 
-    public Pair<Integer, Integer> getCoord() { return coord; }
+    public Coordinates getCoord() { return coord; }
     
     public Directions getDirection() { return goalDir; }
-    public void setCoord(Pair<Integer, Integer> _coord) { coord = _coord; }
+    public void setCoord(Coordinates _coord) { coord = _coord; }
 
     public int getWallsAvailable() {
         return wallsAvailable;
@@ -25,5 +32,13 @@ public class Player
 
     public void setWallsAvailable(int wallsNum) {
         wallsAvailable = wallsNum;
+    }
+
+    public Color getColor() {
+        return color;
+    }
+
+    public String getPath() {
+        return dirPath;
     }
 }

@@ -20,13 +20,10 @@ public class GamePanel extends JPanel {
 
         cellSize = 540 / Settings.boardDim;
         lineLength = cellSize * Settings.boardDim;
-        for (Settings.Directions dir : Settings.Directions.values()) {
-            if (Settings.dirPath.containsKey(dir)) {
-                ImageIcon t = new ImageIcon("src/main/resources/" + Settings.dirPath.get(dir) + ".png");
-                Image tscaled = t.getImage().getScaledInstance(cellSize, cellSize, Image.SCALE_SMOOTH);
-
-                dirImg.put(dir, tscaled);
-            }
+        for(Player player : Game.getInstance().getPlayers()){
+            ImageIcon t = new ImageIcon("src/main/resources/" + player.getPath() + ".png");
+            Image tscaled = t.getImage().getScaledInstance(cellSize, cellSize, Image.SCALE_SMOOTH);
+            dirImg.put(player.getDirection(), tscaled);
         }
     }
 
@@ -50,36 +47,21 @@ public class GamePanel extends JPanel {
                 g.drawRect(i * cellSize + offset, j * cellSize + offset, cellSize, cellSize);
             }
         }
-
-        // North
-        if (Settings.dirCol.containsKey(Settings.Directions.UP)) {
-            g.setColor(Settings.dirCol.get(Settings.Directions.UP));
-            g.fillRect(offset, offset - 25, lineLength, 5);
+        for(Player player: Game.getInstance().getPlayers()){
+            g.setColor(player.getColor());
+            if ((player.getDirection() == Settings.Directions.UP)) {
+                g.fillRect(offset, offset - 25, lineLength, 5);
+            } else if ((player.getDirection() == Settings.Directions.DOWN)) {
+                g.fillRect(offset, offset + lineLength + 20, lineLength, 5);
+            } else if ((player.getDirection() == Settings.Directions.RIGHT)) {
+                g.fillRect(offset + lineLength + 20, offset, 5, lineLength);
+            } else if ((player.getDirection() == Settings.Directions.LEFT)) {
+                g.fillRect(offset - 25, offset, 5, lineLength);
+            }
         }
-
-        // South
-        if (Settings.dirCol.containsKey(Settings.Directions.DOWN)) {
-            g.setColor(Settings.dirCol.get(Settings.Directions.DOWN));
-            g.fillRect(offset, offset + lineLength + 20, lineLength, 5);
-        }
-
-        // East
-        if (Settings.dirCol.containsKey(Settings.Directions.RIGHT)) {
-            g.setColor(Settings.dirCol.get(Settings.Directions.RIGHT));
-            g.fillRect(offset + lineLength + 20, offset, 5, lineLength);
-        }
-
-        // West
-        if (Settings.dirCol.containsKey(Settings.Directions.LEFT)) {
-            g.setColor(Settings.dirCol.get(Settings.Directions.LEFT));
-            g.fillRect(offset - 25, offset, 5, lineLength);
-        }
-
         // Draw the players
         for (Player p : Game.getInstance().getPlayers()) {
-            if (Settings.dirCol.containsKey(p.getDirection())) {
-                g.drawImage(dirImg.get(p.getDirection()), p.getCoord().first * cellSize + offset, p.getCoord().second * cellSize + offset, null);
-            }
+            g.drawImage(dirImg.get(p.getDirection()), p.getCoord().column * cellSize + offset, p.getCoord().row * cellSize + offset, null);
         }
 
         // Draw the walls
@@ -88,11 +70,10 @@ public class GamePanel extends JPanel {
                 if(Game.getInstance().getWallBoard().get(i).get(j).getOrientation() == Settings.Orientations.VOID){
                     continue;
                 }
-                g.setColor(Settings.dirCol.get(Game.getInstance().getWallBoard().get(i).get(j).getOwner()));
+                g.setColor(Game.getInstance().getWallBoard().get(i).get(j).getOwner().getColor());
                 if(Game.getInstance().getWallBoard().get(i).get(j).getOrientation() == Settings.Orientations.HORIZONTAL){
                     g.fillRect(i * cellSize + offset + 4, (j+1) * cellSize + offset - 2, cellSize*2 - 8, 5);
-                }
-                else {
+                } else {
                     g.fillRect((i+1) * cellSize + offset - 2, j * cellSize + offset + 4, 5, cellSize * 2 - 8);
                 }
             }
@@ -102,24 +83,20 @@ public class GamePanel extends JPanel {
         g.setFont(new Font("TimesRoman", Font.PLAIN, 20));
 
         // Draw the wall available
-        if(Game.getInstance().getWallsAvailable().containsKey(Settings.Directions.UP)) {
-            g.setColor(Settings.dirCol.get(Settings.Directions.UP));
-            g.drawString(Game.getInstance().getWallsAvailable().get(Settings.Directions.UP).toString(), offset + lineLength/2 - 10, offset - 35);
-        }
-
-        if(Game.getInstance().getWallsAvailable().containsKey(Settings.Directions.DOWN)) {
-            g.setColor(Settings.dirCol.get(Settings.Directions.DOWN));
-            g.drawString("" + Game.getInstance().getWallsAvailable().get(Settings.Directions.DOWN), offset + lineLength/2 - 10, offset + lineLength + 45);
-        }
-
-        if(Game.getInstance().getWallsAvailable().containsKey(Settings.Directions.RIGHT)) {
-            g.setColor(Settings.dirCol.get(Settings.Directions.RIGHT));
-            g.drawString("" + Game.getInstance().getWallsAvailable().get(Settings.Directions.RIGHT), offset + lineLength + 35, offset + lineLength/2);
-        }
-
-        if(Game.getInstance().getWallsAvailable().containsKey(Settings.Directions.LEFT)) {
-            g.setColor(Settings.dirCol.get(Settings.Directions.LEFT));
-            g.drawString("" + Game.getInstance().getWallsAvailable().get(Settings.Directions.LEFT), offset - 45, offset + lineLength/2);
+        for(Player player: Game.getInstance().getPlayers()){
+            if(player.getDirection() == Settings.Directions.UP) {
+                g.setColor(player.getColor());
+                g.drawString(Integer.toString(player.getWallsAvailable()).toString(), offset + lineLength/2 - 10, offset - 35);
+            } else if(player.getDirection() == Settings.Directions.DOWN) {
+                g.setColor(player.getColor());
+                g.drawString(Integer.toString(player.getWallsAvailable()).toString(), offset + lineLength/2 - 10, offset + lineLength + 45);
+            } else if(player.getDirection() == Settings.Directions.RIGHT) {
+                g.setColor(player.getColor());
+                g.drawString(Integer.toString(player.getWallsAvailable()).toString(), offset + lineLength + 35, offset + lineLength/2);
+            } else if(player.getDirection() == Settings.Directions.LEFT) {
+                g.setColor(player.getColor());
+                g.drawString(Integer.toString(player.getWallsAvailable()).toString(), offset - 45, offset + lineLength/2);
+            }
         }
         this.repaint();
     }
