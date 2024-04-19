@@ -19,9 +19,6 @@ public class ControlPanel extends JPanel {
     private JRadioButton rWallOriz;
     private JButton bWallPlace;
 
-    private JButton bAvanti;
-    private JButton bIndietro;
-
     private JLabel lTurno;
     private JLabel lAnnunci;
 
@@ -134,6 +131,7 @@ public class ControlPanel extends JPanel {
         bSopra.addActionListener(e -> {
             if (Game.getInstance().canMove(Settings.Directions.UP)) {
                 Game.getInstance().move(Settings.Directions.UP);
+                Game.getInstance().nextTurn();
             } else {
                 System.out.println("hai perso");
             }
@@ -142,6 +140,7 @@ public class ControlPanel extends JPanel {
         bSotto.addActionListener(e -> {
             if (Game.getInstance().canMove(Settings.Directions.DOWN)) {
                 Game.getInstance().move(Settings.Directions.DOWN);
+                Game.getInstance().nextTurn();
             } else {
                 System.out.println("hai perso");
             }
@@ -150,6 +149,7 @@ public class ControlPanel extends JPanel {
         bDestra.addActionListener(e -> {
             if (Game.getInstance().canMove(Settings.Directions.RIGHT)) {
                 Game.getInstance().move(Settings.Directions.RIGHT);
+                Game.getInstance().nextTurn();
             } else {
                 System.out.println("hai perso");
             }
@@ -158,6 +158,7 @@ public class ControlPanel extends JPanel {
         bSinistra.addActionListener(e -> {
             if (Game.getInstance().canMove(Settings.Directions.LEFT)) {
                 Game.getInstance().move(Settings.Directions.LEFT);
+                Game.getInstance().nextTurn();
             } else {
                 System.out.println("hai perso");
             }
@@ -168,12 +169,11 @@ public class ControlPanel extends JPanel {
             Integer x = Integer.parseInt(fWallX.getText());
             Integer y = Integer.parseInt(fWallY.getText());
             Pair<Integer, Integer> p = new Pair<>(y, x);  //LI HO INVERTITI PERCHE LE POSIZIONI DEI MURI VANNO AL CONTRARIO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            if (Game.getInstance().canPlaceWall(p, orientation)) {
+            if (Game.getInstance().canPlaceWall(p, orientation, Game.getInstance().getCurrentPlayer())) {
                 Game.getInstance().placeWall(p, orientation, Game.getInstance().getCurrentPlayer());
+                Game.getInstance().nextTurn();
             }
         });
-
-
     }
 
     public void setTurno(String frase){

@@ -9,40 +9,46 @@ import java.util.*;
 public class Game {
 
     private static Game game = null;                      // istanza di game
-    private List<List<Orientations>> wallBoard;                 // matrice dei muri
-    private List<List<Directions>> wallBoardPossession;            // matrice che indica chi ha piazzato i muri
+    private List<List<Wall>> wallBoard;                 // matrice dei muri
     private List<Player> players;                               // lista dei giocatori
-    private Map wallsAvailable;         //per ogni giocatore indica quanti muri ha a disposizione
     private int currentActivePlayer;
 
     private Game(){
         currentActivePlayer = -1;
         players = new ArrayList<>();                            // inizializzo l'array dei giocatori
         wallBoard = new ArrayList<>();                          // inizializzo la matrice dei muri
-        wallBoardPossession = new ArrayList<>();                // inizializzo la matrice che indica chi ha piazzato i muri
-        wallsAvailable = new HashMap<>();
         for(int i = 0; i < (Settings.boardDim-1); i++){
-            List<Orientations> row = new ArrayList<>();
-            List<Directions> row2 = new ArrayList<>();
+            List<Wall> row = new ArrayList<>();
             for(int j = 0; j < (Settings.boardDim-1); j++){
-                row.add(Orientations.VOID);
-                row2.add(Directions.VOID);
+                row.add(new Wall());
             }
             wallBoard.add(row);
-            wallBoardPossession.add(row2);
         }
     }
 
+    /**
+     * metodo per scegliere un giocatore casuale
+     * @implNote sceglie un giocatore casuale tra quelli presenti nella partita e lo setta come giocatore corrente
+     */
     public void chooseRandomPlayer()
     {
         Random random = new Random();
         currentActivePlayer = random.nextInt(0, players.size());
     }
 
+    /**
+     * metodo per ottenere il giocatore corrente
+     * @return il giocatore corrente
+     */
     public Player getCurrentPlayer() {
-        Player temp = players.get(currentActivePlayer);
+        return players.get(currentActivePlayer);
+    }
+
+    /**
+     * metodo per cambiare turno della partita
+     */
+    public void nextTurn(){
         currentActivePlayer = (currentActivePlayer + 1) % players.size();
-        return temp;
     }
 
     /**
@@ -56,18 +62,12 @@ public class Game {
     }           // metodo singleton
 
     /**
-     * metodo per calcolare se un giocatore si può muovere di un passo nella direzione dir
+     * metodo per calcolare se il giocatore attivo si può muovere di un passo nella direzione dir
      * @param dir la direzione verso cui si vuole muovere
      * @return true se il giocatore può muoversi, false altrimenti
      * @implNote richiama il metodo overload canMove, con offsetX = 0 e offsetY = 0
      */
-
-     /*
-        ho fatto sì che, visto che quest overload di canMove viene chiamato dai giocatori,
-        passo solo la direzione in cui voglio andare, ma allora su chi stiamo controllando la canMove???
-        c'è una gestione interna dei turni dei giocatori, così qui gli passo il giocatore su cui dobbiamo fare il controllo.
-      */
-    public boolean canMove(Directions dir){     // metodo che dice se il giocatore passato può fare una mossa nella direzione passata
+     public boolean canMove(Directions dir){     // metodo che dice se il giocatore passato può fare una mossa nella direzione passata
         return canMove(players.get(currentActivePlayer), 0, 0, dir);      // richiama il metodo overload, con offsetX = 0 e offsetY = 0
     }
 
@@ -87,23 +87,22 @@ public class Game {
         if(cond1 && cond2 && cond3 && cond4){
 
             // se sto andando a destra e mi trovo sul bordo superiore o inferiore della mappa posso evitare di controllare rispettivamente il muro sopra e sotto di me. negli altri casi controllo che non ci sia un muro verticale che mi blocca
-            boolean cond5 = dir == Directions.RIGHT && (player.getCoord().second + offsetY > (Settings.boardDim-2) || wallBoard.get(player.getCoord().first + offsetX).get(player.getCoord().second + offsetY) != Orientations.VERTICAL) && (player.getCoord().second + offsetY < 1 || wallBoard.get(player.getCoord().first + offsetX).get(player.getCoord().second + offsetY-1) != Orientations.VERTICAL);
+            boolean cond5 = dir == Directions.RIGHT && (player.getCoord().second + offsetY > (Settings.boardDim-2) || wallBoard.get(player.getCoord().first + offsetX).get(player.getCoord().second + offsetY).getOrientation() != Orientations.VERTICAL) && (player.getCoord().second + offsetY < 1 || wallBoard.get(player.getCoord().first + offsetX).get(player.getCoord().second + offsetY-1).getOrientation() != Orientations.VERTICAL);
             // se sto andando a sinistra e mi trovo sul bordo superiore o inferiore della mappa posso evitare di controllare rispettivamente il muro sopra e sotto di me. negli altri casi controllo che non ci sia un muro verticale che mi blocca
-            boolean cond6 = dir == Directions.LEFT && (player.getCoord().second + offsetY > (Settings.boardDim-2) || wallBoard.get(player.getCoord().first + offsetX-1).get(player.getCoord().second + offsetY) != Orientations.VERTICAL) && (player.getCoord().second + offsetY < 1 || wallBoard.get(player.getCoord().first + offsetX-1).get(player.getCoord().second + offsetY-1) != Orientations.VERTICAL);
+            boolean cond6 = dir == Directions.LEFT && (player.getCoord().second + offsetY > (Settings.boardDim-2) || wallBoard.get(player.getCoord().first + offsetX-1).get(player.getCoord().second + offsetY).getOrientation() != Orientations.VERTICAL) && (player.getCoord().second + offsetY < 1 || wallBoard.get(player.getCoord().first + offsetX-1).get(player.getCoord().second + offsetY-1).getOrientation() != Orientations.VERTICAL);
             // se sto andando su e mi trovo sul bordo destro o sinistro della mappa posso evitare di controllare rispettivamente il muro sopra e sotto di me. negli altri casi controllo che non ci sia un muro orizzontale che mi blocca
-            boolean cond7 = dir == Directions.UP && (player.getCoord().first + offsetX > (Settings.boardDim-2) || wallBoard.get(player.getCoord().first + offsetX).get(player.getCoord().second + offsetY-1) != Orientations.HORIZONTAL) && (player.getCoord().first + offsetX < 1 || wallBoard.get(player.getCoord().first + offsetX-1).get(player.getCoord().second + offsetY-1) != Orientations.HORIZONTAL);
+            boolean cond7 = dir == Directions.UP && (player.getCoord().first + offsetX > (Settings.boardDim-2) || wallBoard.get(player.getCoord().first + offsetX).get(player.getCoord().second + offsetY-1).getOrientation() != Orientations.HORIZONTAL) && (player.getCoord().first + offsetX < 1 || wallBoard.get(player.getCoord().first + offsetX-1).get(player.getCoord().second + offsetY-1).getOrientation() != Orientations.HORIZONTAL);
             // se sto andando giu e mi trovo sul bordo destro o sinistro della mappa posso evitare di controllare rispettivamente il muro sopra e sotto di me. negli altri casi controllo che non ci sia un muro orizzontale che mi blocca
-            boolean cond8 = dir == Directions.DOWN && (player.getCoord().first + offsetX > (Settings.boardDim-2) || wallBoard.get(player.getCoord().first + offsetX).get(player.getCoord().second + offsetY) != Orientations.HORIZONTAL) && (player.getCoord().first + offsetX < 1 || wallBoard.get(player.getCoord().first + offsetX-1).get(player.getCoord().second + offsetY) != Orientations.HORIZONTAL);
+            boolean cond8 = dir == Directions.DOWN && (player.getCoord().first + offsetX > (Settings.boardDim-2) || wallBoard.get(player.getCoord().first + offsetX).get(player.getCoord().second + offsetY).getOrientation() != Orientations.HORIZONTAL) && (player.getCoord().first + offsetX < 1 || wallBoard.get(player.getCoord().first + offsetX-1).get(player.getCoord().second + offsetY).getOrientation() != Orientations.HORIZONTAL);
             return cond1 && cond2 && cond3 && cond4 && (cond5 || cond6 || cond7 || cond8);
         }
         return false;
     }
 
 
-    /*
-        qui dico semplicemente "vai in direzione X", quale giocatore dovrò spostare???
-        quello corrente. lo prelevo con getCurrentPlayer, che in automatico aggiornerà l'indice
-        del giocatore al turno successivo.
+    /**
+     * metodo per muovere il giocatore attivo nella direzione dir
+     * @param dir la direzione verso cui si vuole muovere
      */
     public void move(Directions dir)
     {
@@ -125,35 +124,25 @@ public class Game {
      * @param orientation orientamento del muro da aggiungere
      * @return true se il muro si può aggiungere, false altrimenti
      */
-    public boolean canPlaceWall(Pair<Integer, Integer> pos, Orientations orientation){
+    public boolean canPlaceWall(Pair<Integer, Integer> pos, Orientations orientation, Player player){
+        // controllo che il giocatore abbia ancora muri disponibili
+        if(player.getWallsAvailable() < 1){
+            return false;
+        }
         // controllo che le coordinate in cui voglio piazzare il muro siano valide e non sia stato ancora piazzato un muro
-        if(pos.first >= 0 && pos.first < (Settings.boardDim-1) && pos.second >= 0 && pos.second < (Settings.boardDim-1) && wallBoard.get(pos.first).get(pos.second) == Orientations.VOID){
+        if(pos.first >= 0 && pos.first < (Settings.boardDim-1) && pos.second >= 0 && pos.second < (Settings.boardDim-1) && wallBoard.get(pos.first).get(pos.second).getOrientation() == Orientations.VOID){
             // logicamente se voglio piazzare un muro in 0,0 non devo controllare se sopra di me ci sono altri muri.
             // in caso contrario, controllo che non ci siano muri che si intersecano. successivamente avrò bisogno di piazzare
             // temporaneamente il muro per capire se questo chiude qualche giocatore.
-            if((pos.first-1 < 0 || wallBoard.get(pos.first-1).get(pos.second) != Orientations.HORIZONTAL || orientation != Orientations.HORIZONTAL) && (pos.first+1 > (Settings.boardDim-2) || wallBoard.get(pos.first+1).get(pos.second) != Orientations.HORIZONTAL || orientation != Orientations.HORIZONTAL) && (pos.second-1 < 0 || wallBoard.get(pos.first).get(pos.second-1) != Orientations.VERTICAL || orientation != Orientations.VERTICAL) && (pos.second+1 > (Settings.boardDim-2) || wallBoard.get(pos.first).get(pos.second+1) != Orientations.VERTICAL || orientation != Orientations.VERTICAL)){
-                game.placeWall(pos, orientation);
+            if((pos.first-1 < 0 || wallBoard.get(pos.first-1).get(pos.second).getOrientation() != Orientations.HORIZONTAL || orientation != Orientations.HORIZONTAL) && (pos.first+1 > (Settings.boardDim-2) || wallBoard.get(pos.first+1).get(pos.second).getOrientation() != Orientations.HORIZONTAL || orientation != Orientations.HORIZONTAL) && (pos.second-1 < 0 || wallBoard.get(pos.first).get(pos.second-1).getOrientation() != Orientations.VERTICAL || orientation != Orientations.VERTICAL) && (pos.second+1 > (Settings.boardDim-2) || wallBoard.get(pos.first).get(pos.second+1).getOrientation() != Orientations.VERTICAL || orientation != Orientations.VERTICAL)){
+                game.placeWall(pos, orientation, player);
                 boolean ret = canGoPlayers();
-                game.placeWall(pos, Orientations.VOID);
+                game.placeWall(pos, Orientations.VOID, player);
+                player.setWallsAvailable(player.getWallsAvailable()+1);
                 return ret;
             }
         }
         return false;
-    }
-
-    /**
-     * metodo per controllare che un muro si possa aggiungere, in una determinata posizione e con un determinato orientamento e con un determinato giocatore
-     * @param pos posizione del muro da aggiungere
-     * @param orientation orientamento del muro da aggiungere
-     * @param player giocatore che vuole piazzare il muro
-     * @return true se il muro si può aggiungere, false altrimenti
-     */
-    public boolean canPlaceWall(Pair<Integer, Integer> pos, Orientations orientation, Player player) {
-        // controllo che il giocatore abbia ancora muri disponibili
-        if((Integer)wallsAvailable.get(player.getDirection()) < 1){
-            return false;
-        }
-        return canPlaceWall(pos, orientation);
     }
 
     /**
@@ -244,17 +233,6 @@ public class Game {
     }
 
     /**
-     * metodo per aggiungere un muro alla partita senza proprietario
-     * @param pos un pair che indica le coordinate del muro da aggiungere
-     * @param orientation in che direzione il muro è orientato
-     * @implNote attenzione! non controlla che il muro sia posizionabile, lo aggiunge e basta.
-     * @implNote se nella stessa posizione è già presente un muro, lo sovrascrive
-     */
-    public void placeWall(Pair<Integer, Integer> pos, Orientations orientation){
-        wallBoard.get(pos.first).set(pos.second, orientation);
-    }
-
-    /**
      * metodo per aggiungere un muro alla partita con proprietario
      * @param pos un pair che indica le coordinate del muro da aggiungere
      * @param orientation in che direzione il muro è orientato
@@ -263,9 +241,12 @@ public class Game {
      * @implNote se nella stessa posizione è già presente un muro, lo sovrascrive
      */
     public void placeWall(Pair<Integer, Integer> pos, Orientations orientation, Player player){
-        wallBoard.get(pos.first).set(pos.second, orientation);
-        wallBoardPossession.get(pos.first).set(pos.second, player.getDirection());
-        wallsAvailable.put(player.getDirection(), (Integer)wallsAvailable.get(player.getDirection())-1);
+        if (orientation == Orientations.VOID) {
+            wallBoard.get(pos.first).set(pos.second, new Wall());
+            return;
+        }
+        wallBoard.get(pos.first).set(pos.second, new Wall(orientation, player.getDirection()));
+        player.setWallsAvailable(player.getWallsAvailable()-1);
     }
 
     /**
@@ -280,16 +261,8 @@ public class Game {
      * metodo per ottenere la matrice dei muri della partita
      * @return la matrice dei muri della partita
      */
-    public List<List<Orientations>> getWallBoard(){
+    public List<List<Wall>> getWallBoard(){
         return wallBoard;
-    }
-
-    /**
-     * metodo per ottenere la matrice che indica chi ha piazzato i muri
-     * @return la matrice che indica chi ha piazzato i muri
-     */
-    public List<List<Directions>> getWallBoardPossession(){
-        return wallBoardPossession;
     }
 
     /**
@@ -297,11 +270,17 @@ public class Game {
      * @return la lista del numero dei muri disponibili
      */
     public void setWallsAvailable(Map<Directions, Integer> wallsAvailable) {
-        this.wallsAvailable = wallsAvailable;
+        for(Player player : players){
+            player.setWallsAvailable(wallsAvailable.get(player.getDirection()));
+        }
     }
 
     public Map<Directions, Integer> getWallsAvailable() {
-        return wallsAvailable;
+        Map<Directions, Integer> ret = new HashMap<>();
+        for(Player player : players){
+            ret.put(player.getDirection(), player.getWallsAvailable());
+        }
+        return ret;
     }
 
 }

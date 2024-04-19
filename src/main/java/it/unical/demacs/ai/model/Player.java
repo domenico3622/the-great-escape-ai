@@ -7,6 +7,7 @@ public class Player
 {
     private Pair<Integer, Integer> coord;
     private Directions goalDir;
+    private int wallsAvailable;
 
     public Player(Pair<Integer, Integer> _coord, Directions _goalDir){
         coord = _coord;
@@ -17,4 +18,12 @@ public class Player
     
     public Directions getDirection() { return goalDir; }
     public void setCoord(Pair<Integer, Integer> _coord) { coord = _coord; }
+
+    public int getWallsAvailable() {
+        return wallsAvailable;
+    }
+
+    public void setWallsAvailable(int wallsNum) {
+        wallsAvailable = wallsNum;
+    }
 }

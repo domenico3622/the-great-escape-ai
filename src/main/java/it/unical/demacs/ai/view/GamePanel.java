@@ -6,9 +6,7 @@ import it.unical.demacs.ai.model.Settings;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class GamePanel extends JPanel {
@@ -87,11 +85,11 @@ public class GamePanel extends JPanel {
         // Draw the walls
         for(int i = 0; i < (Settings.boardDim-1); i++){
             for(int j = 0; j < (Settings.boardDim-1); j++){
-                if(Game.getInstance().getWallBoard().get(i).get(j) == Settings.Orientations.VOID){
+                if(Game.getInstance().getWallBoard().get(i).get(j).getOrientation() == Settings.Orientations.VOID){
                     continue;
                 }
-                g.setColor(Settings.dirCol.get(Game.getInstance().getWallBoardPossession().get(i).get(j)));
-                if(Game.getInstance().getWallBoard().get(i).get(j) == Settings.Orientations.HORIZONTAL){
+                g.setColor(Settings.dirCol.get(Game.getInstance().getWallBoard().get(i).get(j).getOwner()));
+                if(Game.getInstance().getWallBoard().get(i).get(j).getOrientation() == Settings.Orientations.HORIZONTAL){
                     g.fillRect(i * cellSize + offset + 4, (j+1) * cellSize + offset - 2, cellSize*2 - 8, 5);
                 }
                 else {
@@ -104,26 +102,22 @@ public class GamePanel extends JPanel {
         g.setFont(new Font("TimesRoman", Font.PLAIN, 20));
 
         // Draw the wall available
-        if(Game.getInstance().getWallsAvailable().containsKey(Settings.Directions.UP))
-        {
+        if(Game.getInstance().getWallsAvailable().containsKey(Settings.Directions.UP)) {
             g.setColor(Settings.dirCol.get(Settings.Directions.UP));
             g.drawString(Game.getInstance().getWallsAvailable().get(Settings.Directions.UP).toString(), offset + lineLength/2 - 10, offset - 35);
         }
 
-        if(Game.getInstance().getWallsAvailable().containsKey(Settings.Directions.DOWN))
-        {
+        if(Game.getInstance().getWallsAvailable().containsKey(Settings.Directions.DOWN)) {
             g.setColor(Settings.dirCol.get(Settings.Directions.DOWN));
             g.drawString("" + Game.getInstance().getWallsAvailable().get(Settings.Directions.DOWN), offset + lineLength/2 - 10, offset + lineLength + 45);
         }
 
-        if(Game.getInstance().getWallsAvailable().containsKey(Settings.Directions.RIGHT))
-        {
+        if(Game.getInstance().getWallsAvailable().containsKey(Settings.Directions.RIGHT)) {
             g.setColor(Settings.dirCol.get(Settings.Directions.RIGHT));
             g.drawString("" + Game.getInstance().getWallsAvailable().get(Settings.Directions.RIGHT), offset + lineLength + 35, offset + lineLength/2);
         }
 
-        if(Game.getInstance().getWallsAvailable().containsKey(Settings.Directions.LEFT))
-        {
+        if(Game.getInstance().getWallsAvailable().containsKey(Settings.Directions.LEFT)) {
             g.setColor(Settings.dirCol.get(Settings.Directions.LEFT));
             g.drawString("" + Game.getInstance().getWallsAvailable().get(Settings.Directions.LEFT), offset - 45, offset + lineLength/2);
         }
