@@ -65,16 +65,16 @@ public class GamePanel extends JPanel {
         }
 
         // Draw the walls
-        for(int i = 0; i < (Settings.boardDim-1); i++){
-            for(int j = 0; j < (Settings.boardDim-1); j++){
-                if(Game.getInstance().getWallBoard().get(i).get(j).getOrientation() == Settings.Orientations.VOID){
+        for(int rowIndex = 0; rowIndex < (Settings.boardDim-1); rowIndex++){
+            for(int columnIndex = 0; columnIndex < (Settings.boardDim-1); columnIndex++){
+                if(Game.getInstance().getWallBoard().get(rowIndex).get(columnIndex).getOrientation() == Settings.Orientations.VOID){
                     continue;
                 }
-                g.setColor(Game.getInstance().getWallBoard().get(i).get(j).getOwner().getColor());
-                if(Game.getInstance().getWallBoard().get(i).get(j).getOrientation() == Settings.Orientations.HORIZONTAL){
-                    g.fillRect(i * cellSize + offset + 4, (j+1) * cellSize + offset - 2, cellSize*2 - 8, 5);
+                g.setColor(Game.getInstance().getWallBoard().get(rowIndex).get(columnIndex).getOwner().getColor());
+                if(Game.getInstance().getWallBoard().get(rowIndex).get(columnIndex).getOrientation() == Settings.Orientations.HORIZONTAL){
+                    g.fillRect((columnIndex) * cellSize + offset + 4, (rowIndex+1) * cellSize + offset - 2, cellSize*2 - 8, 5);
                 } else {
-                    g.fillRect((i+1) * cellSize + offset - 2, j * cellSize + offset + 4, 5, cellSize * 2 - 8);
+                    g.fillRect((columnIndex+1) * cellSize + offset - 2, (rowIndex) * cellSize + offset + 4, 5, cellSize * 2 - 8);
                 }
             }
         }
