@@ -1,5 +1,7 @@
 package it.unical.demacs.ai.view;
 
+import it.unical.demacs.ai.model.Game;
+
 import javax.swing.*;
 import java.awt.*;
 
@@ -52,5 +54,7 @@ public class GameFrame extends JFrame{
             add(splitPane);
 
             setVisible(true);
+            Thread t = new Thread(Game.getInstance().getRunnable());
+            t.start();
         }
 }

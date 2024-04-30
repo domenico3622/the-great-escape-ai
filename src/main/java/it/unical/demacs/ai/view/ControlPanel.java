@@ -131,7 +131,6 @@ public class ControlPanel extends JPanel {
         bSopra.addActionListener(e -> {
             if (Game.getInstance().canMove(Settings.Directions.UP)) {
                 Game.getInstance().move(Settings.Directions.UP);
-                Game.getInstance().nextTurn();
             } else {
                 System.out.println("hai perso");
             }
@@ -140,7 +139,6 @@ public class ControlPanel extends JPanel {
         bSotto.addActionListener(e -> {
             if (Game.getInstance().canMove(Settings.Directions.DOWN)) {
                 Game.getInstance().move(Settings.Directions.DOWN);
-                Game.getInstance().nextTurn();
             } else {
                 System.out.println("hai perso");
             }
@@ -149,7 +147,6 @@ public class ControlPanel extends JPanel {
         bDestra.addActionListener(e -> {
             if (Game.getInstance().canMove(Settings.Directions.RIGHT)) {
                 Game.getInstance().move(Settings.Directions.RIGHT);
-                Game.getInstance().nextTurn();
             } else {
                 System.out.println("hai perso");
             }
@@ -158,7 +155,6 @@ public class ControlPanel extends JPanel {
         bSinistra.addActionListener(e -> {
             if (Game.getInstance().canMove(Settings.Directions.LEFT)) {
                 Game.getInstance().move(Settings.Directions.LEFT);
-                Game.getInstance().nextTurn();
             } else {
                 System.out.println("hai perso");
             }
@@ -171,8 +167,8 @@ public class ControlPanel extends JPanel {
             Coordinates p = new Coordinates(row, column);
             if (Game.getInstance().canPlaceWall(p, orientation, Game.getInstance().getCurrentPlayer())) {
                 Game.getInstance().placeWall(p, orientation, Game.getInstance().getCurrentPlayer());
-                Game.getInstance().nextTurn();
             }
+
         });
     }
 

@@ -2,6 +2,7 @@ package it.unical.demacs.ai.model;
 
 import it.unical.demacs.ai.model.Settings.Directions;
 import it.unical.demacs.ai.model.Settings.Orientations;
+import it.unical.demacs.ai.model.ai.IRS.Agent3;
 import it.unical.demacs.ai.utils.Coordinates;
 
 import java.util.*;
@@ -13,7 +14,45 @@ public class Game {
     private List<Player> players;                               // lista dei giocatori
     private int currentActivePlayer;
 
+    private final Object lock = new Object();
+    private Runnable runnable;
+    private boolean moveDone;
+
     private Game(){
+        moveDone = false;
+        runnable = new Runnable() {
+            @Override
+            public void run() {
+                while (!players.isEmpty())
+                {
+                    synchronized (lock)
+                    {
+                        while (!moveDone && getCurrentPlayer().getName().equals("NO IA"))
+                        {
+                            try
+                            {
+                                lock.wait();
+                            }
+                            catch (InterruptedException e)
+                            {
+                                throw new RuntimeException(e);
+                            }
+                        }
+
+                        Player current = getCurrentPlayer();
+                        switch (current.getName())
+                        {
+                            // per testare le vostre IA
+                            // case "nome ia" -> new agentN(parametri vostri).act();
+                        }
+                        moveDone = false;
+                        nextTurn();
+                    }
+                }
+            }
+        };
+
+
         currentActivePlayer = -1;
         players = new ArrayList<>();                            // inizializzo l'array dei giocatori
         wallBoard = new ArrayList<>();                          // inizializzo la matrice dei muri
@@ -123,6 +162,11 @@ public class Game {
             player.setCoord(new Coordinates(player.getCoord().row - 1, player.getCoord().column));
         } else if (dir == Directions.DOWN) {
             player.setCoord(new Coordinates(player.getCoord().row + 1, player.getCoord().column));
+        }
+        synchronized (lock)
+        {
+            moveDone = true;
+            lock.notifyAll();
         }
     }
 
@@ -269,6 +313,11 @@ public class Game {
         }
         wallBoard.get(pos.row).set(pos.column, new Wall(orientation, player));
         player.setWallsAvailable(player.getWallsAvailable()-1);
+        synchronized (lock)
+        {
+            moveDone = true;
+            lock.notifyAll();
+        }
     }
 
     /**
@@ -304,5 +353,12 @@ public class Game {
         }
         return ret;
     }
+
+
+
+    public Runnable getRunnable() {
+        return runnable;
+    }
+
 
 }

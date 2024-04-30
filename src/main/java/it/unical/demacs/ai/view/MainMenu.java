@@ -159,20 +159,29 @@ public class MainMenu extends JPanel{
             Settings.boardDim = sliderMatrix.getValue();
             Map<Settings.Directions, Integer> wallsAvailable = new HashMap<>();
             Random Random = new Random();
+            Player temp = null;
             if (NPlayer.getSelectedItem() != null) {
-                Game.getInstance().addPlayer(new Player(new Coordinates(0, Random.nextInt(0, Settings.boardDim)), Settings.Directions.DOWN, icons[NPlayer.getSelectedIndex()].color, icons[NPlayer.getSelectedIndex()].getResourceName()));
+                temp = new Player(new Coordinates(0, Random.nextInt(0, Settings.boardDim)), Settings.Directions.DOWN, icons[NPlayer.getSelectedIndex()].color, icons[NPlayer.getSelectedIndex()].getResourceName());
+                Game.getInstance().addPlayer(temp);
+                temp.setName(NSolver.getSelectedItem().toString());
                 wallsAvailable.put(Settings.Directions.DOWN, sliderWalls.getValue());
             }
             if (SPlayer.getSelectedItem() != null) {
-                Game.getInstance().addPlayer(new Player(new Coordinates(Settings.boardDim - 1, Random.nextInt(0, Settings.boardDim)), Settings.Directions.UP, icons[SPlayer.getSelectedIndex()].color, icons[SPlayer.getSelectedIndex()].getResourceName()));
+                temp = new Player(new Coordinates(Settings.boardDim - 1, Random.nextInt(0, Settings.boardDim)), Settings.Directions.UP, icons[SPlayer.getSelectedIndex()].color, icons[SPlayer.getSelectedIndex()].getResourceName());
+                Game.getInstance().addPlayer(temp);
+                temp.setName(SSolver.getSelectedItem().toString());
                 wallsAvailable.put(Settings.Directions.UP, sliderWalls.getValue());
             }
             if (EPlayer.getSelectedItem() != null) {
-                Game.getInstance().addPlayer(new Player(new Coordinates(Random.nextInt(0, Settings.boardDim), Settings.boardDim - 1), Settings.Directions.LEFT, icons[EPlayer.getSelectedIndex()].color, icons[EPlayer.getSelectedIndex()].getResourceName()));
+                temp = new Player(new Coordinates(Random.nextInt(0, Settings.boardDim), Settings.boardDim - 1), Settings.Directions.LEFT, icons[EPlayer.getSelectedIndex()].color, icons[EPlayer.getSelectedIndex()].getResourceName());
+                Game.getInstance().addPlayer(temp);
+                temp.setName(ESolver.getSelectedItem().toString());
                 wallsAvailable.put(Settings.Directions.LEFT, sliderWalls.getValue());
             }
             if (WPlayer.getSelectedItem() != null) {
-                Game.getInstance().addPlayer(new Player(new Coordinates(Random.nextInt(0, Settings.boardDim), 0), Settings.Directions.RIGHT, icons[WPlayer.getSelectedIndex()].color, icons[WPlayer.getSelectedIndex()].getResourceName()));
+                temp = new Player(new Coordinates(Random.nextInt(0, Settings.boardDim), 0), Settings.Directions.RIGHT, icons[WPlayer.getSelectedIndex()].color, icons[WPlayer.getSelectedIndex()].getResourceName());
+                Game.getInstance().addPlayer(temp);
+                temp.setName(WSolver.getSelectedItem().toString());
                 wallsAvailable.put(Settings.Directions.RIGHT, sliderWalls.getValue());
             }
 
@@ -229,7 +238,7 @@ public class MainMenu extends JPanel{
         c.gridwidth = 4;
 
         AISelectionPanel.add(sliderWalls, c);
-
+        /*
         c.gridy = 7;
         c.gridx = 0;
         c.gridwidth = 1;
@@ -238,7 +247,7 @@ public class MainMenu extends JPanel{
 
         c.gridx = 1;
         c.gridwidth = 4;
-
+*/
         AISelectionPanel.add(sliderMatrix, c);
 
         c.gridx = 0;

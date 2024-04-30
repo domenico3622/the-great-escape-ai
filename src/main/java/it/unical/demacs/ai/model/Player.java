@@ -12,6 +12,7 @@ public class Player
     private int wallsAvailable;
     private Color color;
     private String dirPath;
+    private String name;
 
     public Player(Coordinates _coord, Directions _goalDir, Color _color, String _dirPath){
         coord = _coord;
@@ -19,6 +20,7 @@ public class Player
         wallsAvailable = 10;
         color = _color;
         dirPath = _dirPath;
+        name = "";
     }
 
     public Coordinates getCoord() { return coord; }
@@ -40,5 +42,13 @@ public class Player
 
     public String getPath() {
         return dirPath;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }
