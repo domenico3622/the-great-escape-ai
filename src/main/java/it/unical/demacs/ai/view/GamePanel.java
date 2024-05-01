@@ -98,7 +98,12 @@ public class GamePanel extends JPanel {
                 g.drawString(Integer.toString(player.getWallsAvailable()).toString(), offset - 45, offset + lineLength/2);
             }
         }
-        this.repaint();
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        repaint();
     }
 }
 

@@ -238,7 +238,7 @@ public class MainMenu extends JPanel{
         c.gridwidth = 4;
 
         AISelectionPanel.add(sliderWalls, c);
-        /*
+    
         c.gridy = 7;
         c.gridx = 0;
         c.gridwidth = 1;
@@ -247,7 +247,7 @@ public class MainMenu extends JPanel{
 
         c.gridx = 1;
         c.gridwidth = 4;
-*/
+
         AISelectionPanel.add(sliderMatrix, c);
 
         c.gridx = 0;

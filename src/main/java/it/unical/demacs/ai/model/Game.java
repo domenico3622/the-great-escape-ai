@@ -2,15 +2,15 @@ package it.unical.demacs.ai.model;
 
 import it.unical.demacs.ai.model.Settings.Directions;
 import it.unical.demacs.ai.model.Settings.Orientations;
-import it.unical.demacs.ai.model.ai.IRS.Agent3;
+//import it.unical.demacs.ai.model.ai.IRS.Agent3;
 import it.unical.demacs.ai.utils.Coordinates;
 
 import java.util.*;
 
 public class Game {
 
-    private static Game game = null;                      // istanza di game
-    private List<List<Wall>> wallBoard;                 // matrice dei muri
+    private static Game game = null;                            // istanza di game
+    private List<List<Wall>> wallBoard;                         // matrice dei muri
     private List<Player> players;                               // lista dei giocatori
     private int currentActivePlayer;
 
@@ -186,13 +186,19 @@ public class Game {
             // logicamente se voglio piazzare un muro in 0,0 non devo controllare se sopra di me ci sono altri muri.
             // in caso contrario, controllo che non ci siano muri che si intersecano. successivamente avrò bisogno di piazzare
             // temporaneamente il muro per capire se questo chiude qualche giocatore.
-            for(int i = -1;i < 2; i++){
-                for(int j = -1; j < 2; j++){
-                    if ((i == 0 || j == 0) && (i != 0 || j != 0)){
-                        if(validPosition(new Coordinates(pos.row + i, pos.column + j), true) && wallBoard.get(pos.row + i).get(pos.column + j).getOrientation() == orientation){
-                            return false;
-                        }
-                    }
+            if(orientation == Orientations.HORIZONTAL){
+                if(validPosition(new Coordinates(pos.row, pos.column - 1), true) && ((wallBoard.get(pos.row).get(pos.column - 1).getOrientation() == Orientations.HORIZONTAL))){
+                    return false;
+                }
+                if(validPosition(new Coordinates(pos.row, pos.column + 1), true) && ((wallBoard.get(pos.row).get(pos.column + 1).getOrientation() == Orientations.HORIZONTAL))){
+                    return false;
+                }
+            } else {
+                if(validPosition(new Coordinates(pos.row - 1, pos.column), true) && ((wallBoard.get(pos.row - 1).get(pos.column).getOrientation() == Orientations.VERTICAL))){
+                    return false;
+                }
+                if(validPosition(new Coordinates(pos.row + 1, pos.column), true) && ((wallBoard.get(pos.row + 1).get(pos.column).getOrientation() == Orientations.VERTICAL))){
+                    return false;
                 }
             }
             game.placeWall(pos, orientation, player);
@@ -248,26 +254,35 @@ public class Game {
             return canBeReached.get(player.getCoord().row + offsetRow).get(player.getCoord().column + offsetColumn) > 0;
         } else {
             canBeReached.get(player.getCoord().row + offsetRow).set(player.getCoord().column + offsetColumn, - 1);
-            List<Integer> possible = new ArrayList<>();
+            //List<Integer> possible = new ArrayList<>();
             if(canGoPlayersImpl(player, offsetRow+1, offsetColumn, canBeReached) && canMove(player, offsetRow, offsetColumn, Directions.DOWN)){
-                possible.add(canBeReached.get(player.getCoord().row + offsetRow + 1).get(player.getCoord().column + offsetColumn));
+                canBeReached.get(player.getCoord().row + offsetRow).set(player.getCoord().column + offsetColumn, 1);
+                return true;
+                //possible.add(canBeReached.get(player.getCoord().row + offsetRow + 1).get(player.getCoord().column + offsetColumn));
             }
             if (canGoPlayersImpl(player, offsetRow-1, offsetColumn, canBeReached) && canMove(player, offsetRow, offsetColumn, Directions.UP)){
-                possible.add(canBeReached.get(player.getCoord().row + offsetRow - 1).get(player.getCoord().column + offsetColumn));
+                canBeReached.get(player.getCoord().row + offsetRow).set(player.getCoord().column + offsetColumn, 1);
+                return true;
+                //possible.add(canBeReached.get(player.getCoord().row + offsetRow - 1).get(player.getCoord().column + offsetColumn));
             }
             if (canGoPlayersImpl(player, offsetRow, offsetColumn+1, canBeReached) && canMove(player, offsetRow, offsetColumn, Directions.RIGHT)){
-                possible.add(canBeReached.get(player.getCoord().row + offsetRow).get(player.getCoord().column + offsetColumn + 1));
+                canBeReached.get(player.getCoord().row + offsetRow).set(player.getCoord().column + offsetColumn, 1);
+                return true;
+                //possible.add(canBeReached.get(player.getCoord().row + offsetRow).get(player.getCoord().column + offsetColumn + 1));
             }
             if (canGoPlayersImpl(player, offsetRow, offsetColumn-1, canBeReached) && canMove(player, offsetRow, offsetColumn, Directions.LEFT)){
-                possible.add(canBeReached.get(player.getCoord().row + offsetRow).get(player.getCoord().column + offsetColumn - 1));
+                canBeReached.get(player.getCoord().row + offsetRow).set(player.getCoord().column + offsetColumn, 1);
+                return true;
+                //possible.add(canBeReached.get(player.getCoord().row + offsetRow).get(player.getCoord().column + offsetColumn - 1));
             }
-            if(possible.size() > 0){
+            /*if(possible.size() > 0){
                 canBeReached.get(player.getCoord().row + offsetRow).set(player.getCoord().column + offsetColumn, Collections.min(possible) + 1);
                 return true;
             } else {
                 canBeReached.get(player.getCoord().row + offsetRow).set(player.getCoord().column + offsetColumn, -1);
                 return false;
-            }
+            }*/
+            return false;
         }
     }
 

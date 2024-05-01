@@ -37,16 +37,6 @@ public class GameFrame extends JFrame{
             gamePanel = new GamePanel();
             controlPanel = new ControlPanel();
 
-            new java.util.Timer().schedule(
-                new java.util.TimerTask() {
-                    @Override
-                    public void run() {
-                        gamePanel.repaint();
-                    }
-                },
-                250
-            );
-
             remove(panelCaricamento);
             JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, gamePanel, controlPanel);
             splitPane.setDividerLocation(690);
