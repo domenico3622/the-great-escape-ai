@@ -187,6 +187,8 @@ public class MainMenu extends JPanel{
 
             Game.getInstance().setWallsAvailable(wallsAvailable);
             Game.getInstance().chooseRandomPlayer();
+            //imposta il numero massimo di muri per giocatore
+            Game.getInstance().setMaxWallXPlayer(sliderWalls.getValue());
 
 
             // Chiudi il dialog

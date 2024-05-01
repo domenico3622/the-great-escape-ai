@@ -375,5 +375,12 @@ public class Game {
         return runnable;
     }
 
+    private int maxWallXPlayer;
+    public int setMaxWallXPlayer(int maxWallXPlayer){
+        return this.maxWallXPlayer = maxWallXPlayer;
+    }
+    public int getMaxWallXPlayer(){
+        return maxWallXPlayer;
+    }
 
 }

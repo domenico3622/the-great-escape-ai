@@ -1,3 +1,4 @@
 target/
 .vscode/
 .idea/
+src/main/java/it/unical/demacs/ai/model/ai/
