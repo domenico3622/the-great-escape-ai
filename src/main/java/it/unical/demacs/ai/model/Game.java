@@ -253,26 +253,26 @@ public class Game {
             canBeReached.get(player.getCoord().row + offsetRow).set(player.getCoord().column + offsetColumn, 1);
             return true;
         }  else if (canBeReached.get(player.getCoord().row + offsetRow).get(player.getCoord().column + offsetColumn) != 0) {
-            return canBeReached.get(player.getCoord().row + offsetRow).get(player.getCoord().column + offsetColumn) > 0;
+            return canBeReached.get(player.getCoord().row + offsetRow).get(player.getCoord().column + offsetColumn) == 1;
         } else {
             canBeReached.get(player.getCoord().row + offsetRow).set(player.getCoord().column + offsetColumn, - 1);
             //List<Integer> possible = new ArrayList<>();
-            if(canGoPlayersImpl(player, offsetRow+1, offsetColumn, canBeReached) && canMove(player, offsetRow, offsetColumn, Directions.DOWN)){
+            if(validPosition(new Coordinates(player.getCoord().row + offsetRow+1, player.getCoord().column + offsetColumn), false) && canMove(player, offsetRow, offsetColumn, Directions.DOWN) && canGoPlayersImpl(player, offsetRow+1, offsetColumn, canBeReached)){
                 canBeReached.get(player.getCoord().row + offsetRow).set(player.getCoord().column + offsetColumn, 1);
                 return true;
                 //possible.add(canBeReached.get(player.getCoord().row + offsetRow + 1).get(player.getCoord().column + offsetColumn));
             }
-            if (canGoPlayersImpl(player, offsetRow-1, offsetColumn, canBeReached) && canMove(player, offsetRow, offsetColumn, Directions.UP)){
+            if (validPosition(new Coordinates(player.getCoord().row + offsetRow-1, player.getCoord().column + offsetColumn), false) && canMove(player, offsetRow, offsetColumn, Directions.UP) && canGoPlayersImpl(player, offsetRow-1, offsetColumn, canBeReached)){
                 canBeReached.get(player.getCoord().row + offsetRow).set(player.getCoord().column + offsetColumn, 1);
                 return true;
                 //possible.add(canBeReached.get(player.getCoord().row + offsetRow - 1).get(player.getCoord().column + offsetColumn));
             }
-            if (canGoPlayersImpl(player, offsetRow, offsetColumn+1, canBeReached) && canMove(player, offsetRow, offsetColumn, Directions.RIGHT)){
+            if (validPosition(new Coordinates(player.getCoord().row + offsetRow, player.getCoord().column + offsetColumn+1), false) && canMove(player, offsetRow, offsetColumn, Directions.RIGHT) && canGoPlayersImpl(player, offsetRow, offsetColumn+1, canBeReached)){
                 canBeReached.get(player.getCoord().row + offsetRow).set(player.getCoord().column + offsetColumn, 1);
                 return true;
                 //possible.add(canBeReached.get(player.getCoord().row + offsetRow).get(player.getCoord().column + offsetColumn + 1));
             }
-            if (canGoPlayersImpl(player, offsetRow, offsetColumn-1, canBeReached) && canMove(player, offsetRow, offsetColumn, Directions.LEFT)){
+            if (validPosition(new Coordinates(player.getCoord().row + offsetRow, player.getCoord().column + offsetColumn-1), false) && canMove(player, offsetRow, offsetColumn, Directions.LEFT) && canGoPlayersImpl(player, offsetRow, offsetColumn-1, canBeReached)){
                 canBeReached.get(player.getCoord().row + offsetRow).set(player.getCoord().column + offsetColumn, 1);
                 return true;
                 //possible.add(canBeReached.get(player.getCoord().row + offsetRow).get(player.getCoord().column + offsetColumn - 1));
