@@ -1,4 +1,8 @@
 target/
 .vscode/
 .idea/
-src/main/java/it/unical/demacs/ai/model/ai/
+src/main/java/it/unical/demacs/ai/model/ai/ASPetta_e_infera/
+src/main/java/it/unical/demacs/ai/model/ai/GrissinVanBon
+src/main/java/it/unical/demacs/ai/model/ai/IRS
+src/main/java/it/unical/demacs/ai/model/ai/JYPapi
+

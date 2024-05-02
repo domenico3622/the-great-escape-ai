@@ -3,7 +3,7 @@ package it.unical.demacs.ai.model;
 import it.unical.demacs.ai.model.Settings.Directions;
 import it.unical.demacs.ai.model.Settings.Orientations;
 //import it.unical.demacs.ai.model.ai.IRS.Agent3;
-import it.unical.demacs.ai.model.ai.palo.Agent5;
+import it.unical.demacs.ai.model.ai.inputAgent.InputAgent;
 import it.unical.demacs.ai.utils.Coordinates;
 
 import java.util.*;
@@ -45,7 +45,7 @@ public class Game {
                         {
                             // per testare le vostre IA
                             // case "nome ia" -> new agentN(parametri vostri).act();
-                            case "PALO" -> new Agent5(current).act();
+                            case "PALO" -> new InputAgent(current).act();
                         }
                         moveDone = false;
                         nextTurn();
