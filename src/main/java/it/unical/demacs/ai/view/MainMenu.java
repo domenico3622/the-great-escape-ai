@@ -28,7 +28,7 @@ public class MainMenu extends JPanel{
     private JSlider sliderWalls;
     private JSlider sliderMatrix;
 
-    String[] solvers = new String[]{"No Player" , "NO IA", "ASPetta e Infera", "Grissin Van Bon", "JYPapi", "IRS"};
+    String[] solvers = new String[]{"No Player" , "NO IA", "ASPetta e Infera", "Grissin Van Bon", "JYPapi", "IRS", "PALO"};
 
     private JButton startButton;
 
