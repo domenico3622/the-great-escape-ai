@@ -98,6 +98,18 @@ public class GamePanel extends JPanel {
                 g.drawString(Integer.toString(player.getWallsAvailable()).toString(), offset - 45, offset + lineLength/2);
             }
         }
+
+        // Draw the turn
+        g.setColor(Game.getInstance().getCurrentPlayer().getColor());
+        g.fillOval(320, 675, 50, 50);
+
+        g.setColor(Color.BLACK);
+        g.drawOval(320, 675, 50, 50);
+
+        g.setColor(Color.WHITE);
+        g.drawString("Turno", 320, 705);
+
+
         try {
             Thread.sleep(100);
         } catch (InterruptedException e) {
