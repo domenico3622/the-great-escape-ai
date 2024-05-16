@@ -5,6 +5,7 @@ import it.unical.demacs.ai.model.Settings.Orientations;
 //import it.unical.demacs.ai.model.ai.IRS.Agent3;
 import it.unical.demacs.ai.model.ai.inputAgent.InputAgent;
 import it.unical.demacs.ai.utils.Coordinates;
+import it.unical.demacs.ai.model.ai.JYPapi.Agent4;
 
 import java.util.*;
 
@@ -46,6 +47,15 @@ public class Game {
                             // per testare le vostre IA
                             // case "nome ia" -> new agentN(parametri vostri).act();
                             case "PALO" -> new InputAgent(current).act();
+
+                            case "JYPapi" -> new Agent4().act();
+                        }
+                        for(Player player: players){
+                            if(winPosition(player, 0, 0)){
+                                System.out.println(player.getName() + " ha vinto!");
+                                players.remove(player);
+                                break;
+                            }
                         }
                         moveDone = false;
                         nextTurn();
