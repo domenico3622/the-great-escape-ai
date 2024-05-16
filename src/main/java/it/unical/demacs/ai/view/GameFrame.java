@@ -22,7 +22,7 @@ public class GameFrame extends JFrame{
             panelCaricamento.setBackground(Color.LIGHT_GRAY);
             add(panelCaricamento);
 
-            setSize(900, 750);
+            setSize(710, 770);
             setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             setResizable(false);
             setVisible(true);
@@ -35,13 +35,14 @@ public class GameFrame extends JFrame{
             dialog.setVisible(true);
 
             gamePanel = new GamePanel();
-            controlPanel = new ControlPanel();
+            //controlPanel = new ControlPanel();
 
             remove(panelCaricamento);
-            JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, gamePanel, controlPanel);
-            splitPane.setDividerLocation(690);
-            splitPane.setEnabled(false);
-            add(splitPane);
+            add(gamePanel);
+            //JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, gamePanel, controlPanel);
+            //splitPane.setDividerLocation(690);
+            //splitPane.setEnabled(false);
+            //add(splitPane);
 
             setVisible(true);
             Thread t = new Thread(Game.getInstance().getRunnable());
