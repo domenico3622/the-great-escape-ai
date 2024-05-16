@@ -14,7 +14,7 @@ public class Game {
     private static Game game = null;                            // istanza di game
     private List<List<Wall>> wallBoard;                         // matrice dei muri
     private List<Player> players;
-    private List<Player> winners;                               // lista dei giocatori
+    private List<Player> winners = new ArrayList<>();                               // lista dei giocatori
     private int currentActivePlayer;
 
     private final Object lock = new Object();
@@ -35,6 +35,14 @@ public class Game {
                             // case "nome ia" -> new agentN(parametri vostri).act();
                             case "Grissin Van Bon" -> new it.unical.demacs.ai.model.ai.GrissinVanBon.Agent2Clingo(currentActivePlayer).act();
                             case "PALO" -> new InputAgent(current).act();
+                        }
+                        if(winPosition(current, 0, 0)){
+                            System.out.println(current.getName() + " ha vinto!");
+                            System.out.println("1");
+                            winners.add(current);
+                            System.out.println("1.5");
+                            players.remove(current);
+                            System.out.println("2");
                         }
                         nextTurn();
                     }
