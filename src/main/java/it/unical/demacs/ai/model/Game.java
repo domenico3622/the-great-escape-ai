@@ -13,7 +13,8 @@ public class Game {
 
     private static Game game = null;                            // istanza di game
     private List<List<Wall>> wallBoard;                         // matrice dei muri
-    private List<Player> players;                               // lista dei giocatori
+    private List<Player> players;
+    private List<Player> winners;                               // lista dei giocatori
     private int currentActivePlayer;
 
     private final Object lock = new Object();
@@ -54,6 +55,7 @@ public class Game {
                             if(winPosition(player, 0, 0)){
                                 System.out.println(player.getName() + " ha vinto!");
                                 players.remove(player);
+                                winners.add(player);
                                 break;
                             }
                         }
@@ -385,6 +387,10 @@ public class Game {
 
     public Runnable getRunnable() {
         return runnable;
+    }
+
+    public List<Player> getWinners() {
+        return winners;
     }
 
     private int maxWallXPlayer;
