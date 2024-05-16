@@ -19,10 +19,8 @@ public class Game {
 
     private final Object lock = new Object();
     private Runnable runnable;
-    private boolean moveDone;
 
     private Game(){
-        moveDone = false;
         runnable = new Runnable() {
             @Override
             public void run() {
@@ -30,36 +28,14 @@ public class Game {
                 {
                     synchronized (lock)
                     {
-                        while (!moveDone && getCurrentPlayer().getName().equals("NO IA"))
-                        {
-                            try
-                            {
-                                lock.wait();
-                            }
-                            catch (InterruptedException e)
-                            {
-                                throw new RuntimeException(e);
-                            }
-                        }
-
                         Player current = getCurrentPlayer();
                         switch (current.getName())
                         {
                             // per testare le vostre IA
                             // case "nome ia" -> new agentN(parametri vostri).act();
+                            case "Grissin Van Bon" -> new it.unical.demacs.ai.model.ai.GrissinVanBon.Agent2Clingo(currentActivePlayer).act();
                             case "PALO" -> new InputAgent(current).act();
-
-                            case "JYPapi" -> new Agent4().act();
                         }
-                        for(Player player: players){
-                            if(winPosition(player, 0, 0)){
-                                System.out.println(player.getName() + " ha vinto!");
-                                players.remove(player);
-                                winners.add(player);
-                                break;
-                            }
-                        }
-                        moveDone = false;
                         nextTurn();
                     }
                 }
@@ -176,11 +152,6 @@ public class Game {
             player.setCoord(new Coordinates(player.getCoord().row - 1, player.getCoord().column));
         } else if (dir == Directions.DOWN) {
             player.setCoord(new Coordinates(player.getCoord().row + 1, player.getCoord().column));
-        }
-        synchronized (lock)
-        {
-            moveDone = true;
-            lock.notifyAll();
         }
     }
 
@@ -342,11 +313,7 @@ public class Game {
         }
         wallBoard.get(pos.row).set(pos.column, new Wall(orientation, player));
         player.setWallsAvailable(player.getWallsAvailable()-1);
-        synchronized (lock)
-        {
-            moveDone = true;
-            lock.notifyAll();
-        }
+
     }
 
     /**
