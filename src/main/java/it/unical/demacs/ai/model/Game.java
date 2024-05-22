@@ -33,8 +33,9 @@ public class Game {
                         {
                             // per testare le vostre IA
                             // case "nome ia" -> new agentN(parametri vostri).act();
-                            case "Grissin Van Bon" -> new it.unical.demacs.ai.model.ai.GrissinVanBon.Agent2Clingo(currentActivePlayer).act();
+                            //case "Grissin Van Bon" -> new it.unical.demacs.ai.model.ai.GrissinVanBon.Agent2Clingo(currentActivePlayer).act();
                             case "PALO" -> new InputAgent(current).act();
+                            case "JYPapi" -> new Agent4(current).act();
                         }
                         if(winPosition(current, 0, 0)){
                             System.out.println(current.getName() + " ha vinto!");
