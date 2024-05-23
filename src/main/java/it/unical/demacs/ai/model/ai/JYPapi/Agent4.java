@@ -22,6 +22,7 @@ import it.unical.mat.embasp.specializations.dlv2.desktop.DLV2DesktopService;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class Agent4 implements Agent{
 
@@ -93,6 +94,7 @@ public class Agent4 implements Agent{
             ASPMapper.getInstance().registerClass(MyId.class);
             ASPMapper.getInstance().registerClass(JYPlayer.class);
             ASPMapper.getInstance().registerClass(OurWall.class);
+            ASPMapper.getInstance().registerClass(RandomNumb.class);
         } catch (ObjectNotValidException | IllegalAnnotationException e) {
             throw new RuntimeException(e);
         }
@@ -106,6 +108,17 @@ public class Agent4 implements Agent{
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        }
+
+        Random randomizer = new Random();
+
+
+        try{
+            RandomNumb randomNumb= new RandomNumb();
+            randomNumb.setRandomNumb(randomizer.nextInt(0,2));
+            facts.addObjectInput(randomNumb);
+        }catch (Exception e) {
+            e.printStackTrace();
         }
 
        for( OurWall wall: ourWalls)
