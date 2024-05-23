@@ -114,9 +114,16 @@ public class Agent4 implements Agent{
 
 
         try{
-            RandomNumb randomNumb= new RandomNumb();
-            randomNumb.setRandomNumb(randomizer.nextInt(0,2));
-            facts.addObjectInput(randomNumb);
+            RandomNumb randomNum= new RandomNumb();
+
+            if(randomizer.nextInt(0,7)%2==0){
+                randomNum.setRandomNum(1);
+            }else {
+                randomNum.setRandomNum(0);
+            }
+
+            System.out.println(randomNum.getRandomNum()+ " random number");
+            facts.addObjectInput(randomNum);
         }catch (Exception e) {
             e.printStackTrace();
         }

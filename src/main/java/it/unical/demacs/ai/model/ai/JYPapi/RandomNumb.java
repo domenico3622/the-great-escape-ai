@@ -6,14 +6,19 @@ import it.unical.mat.embasp.languages.Param;
 @Id("random")
 public class RandomNumb {
     @Param(0)
-    int randomNumb;
+    private int randomNum;
 
-
-    public int getRandomNumb() {
-        return randomNumb;
+    public RandomNumb(int randomNum) {
+        this.randomNum = randomNum;
     }
 
-    public void setRandomNumb(int randomNumb) {
-        this.randomNumb = randomNumb;
+    public RandomNumb() {}
+
+    public int getRandomNum() {
+        return randomNum;
+    }
+
+    public void setRandomNum(int randomNum) {
+        this.randomNum =   randomNum;
     }
 }
