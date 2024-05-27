@@ -103,7 +103,7 @@ public class Agent4 implements Agent{
         for(JYPlayer player: JYPlayers)
         {
             try {
-                System.out.println(player.getId());
+                //System.out.println(player.getId());
                 facts.addObjectInput(player);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -122,7 +122,7 @@ public class Agent4 implements Agent{
                 randomNum.setRandomNum(0);
             }
 
-            System.out.println(randomNum.getRandomNum()+ " random number");
+            //System.out.println(randomNum.getRandomNum()+ " random number");
             facts.addObjectInput(randomNum);
         }catch (Exception e) {
             e.printStackTrace();
@@ -169,15 +169,15 @@ public class Agent4 implements Agent{
                      InstantiationException e) {
                 throw new RuntimeException(e);
             }
-            System.out.println("NextPos: " + nextPos);
-            System.out.println("NewWall: " + newWall);
+            //System.out.println("NextPos: " + nextPos);
+            //System.out.println("NewWall: " + newWall);
             if(nextPos!=null){
                 Coordinates coord= new Coordinates(nextPos.getNewRow(), nextPos.getNewCol());
                 myPlayer.setCoord(coord);
             }
             if(newWall!=null){
                 Wall wall= mapper.mapNewWallToWall(newWall);
-                System.out.println(wall.getOrientation());
+                //System.out.println(wall.getOrientation());
                 Coordinates coord= new Coordinates(newWall.getRowWall(), newWall.getColWall());
                 game.placeWall(coord, wall.getOrientation(), myPlayer);
             }
