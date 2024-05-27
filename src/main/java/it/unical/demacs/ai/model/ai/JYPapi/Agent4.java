@@ -137,7 +137,7 @@ public class Agent4 implements Agent{
             }
         }
        for(int i=0; i<game.getPlayers().size(); i++){
-            if(game.getPlayers().get(i).getName().equals("JYPapi")){
+            if(game.getPlayers().get(i)==myPlayer){
                 try {
                     MyId myId = new MyId(i);
                     facts.addObjectInput(myId);
