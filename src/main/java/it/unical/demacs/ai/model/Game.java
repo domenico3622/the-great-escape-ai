@@ -6,7 +6,7 @@ import it.unical.demacs.ai.model.Settings.Orientations;
 import it.unical.demacs.ai.model.ai.inputAgent.InputAgent;
 import it.unical.demacs.ai.model.ai.Agent;
 import it.unical.demacs.ai.model.ai.ASPetta_e_infera.Agent1;
-import it.unical.demacs.ai.model.ai.GrissinVanBon.Agent2Clingo;
+//import it.unical.demacs.ai.model.ai.GrissinVanBon.Agent2Clingo;
 import it.unical.demacs.ai.model.ai.IRS.Agent3;
 import it.unical.demacs.ai.utils.Coordinates;
 import it.unical.demacs.ai.model.ai.JYPapi.Agent4;
@@ -51,17 +51,17 @@ public class Game {
                             }
                             case "Grissin Van Bon" -> {
                                 if (agentGrissinVanBon == null)
-                                    agentGrissinVanBon = new Agent2Clingo(current);
+                                    //agentGrissinVanBon = new Agent2Clingo(current);
                                 agentGrissinVanBon.act();
                             }
                             case "IRS" -> {
                                 if (agentIRS == null)
-                                    agentIRS = new Agent3(current);
+                                    //agentIRS = new Agent3(current);
                                 agentIRS.act();
                             }
                             case "JYPapi" -> {
                                 if (agentJYPapi == null)
-                                    agentJYPapi = new Agent4(current);
+                                    //agentJYPapi = new Agent4(current);
                                 agentJYPapi.act();
                             
                             }
