@@ -3,6 +3,7 @@ package it.unical.demacs.ai.model;
 import it.unical.demacs.ai.model.Settings.Directions;
 import it.unical.demacs.ai.model.Settings.Orientations;
 //import it.unical.demacs.ai.model.ai.IRS.Agent3;
+import it.unical.demacs.ai.model.ai.GrissinVanBon.Agent2Clingo;
 import it.unical.demacs.ai.model.ai.inputAgent.InputAgent;
 import it.unical.demacs.ai.model.ai.Agent;
 import it.unical.demacs.ai.model.ai.ASPetta_e_infera.Agent1;
@@ -27,7 +28,6 @@ public class Game {
     private Runnable runnable;
 
     Agent agentASPettaEInfera;
-    Agent agentGrissinVanBon;
     Agent agentIRS;
     Agent agentJYPapi;
 
@@ -50,9 +50,7 @@ public class Game {
                                     agentASPettaEInfera.act();
                             }
                             case "Grissin Van Bon" -> {
-                                if (agentGrissinVanBon == null)
-                                    //agentGrissinVanBon = new Agent2Clingo(current);
-                                agentGrissinVanBon.act();
+                                new Agent2Clingo(currentActivePlayer).act();
                             }
                             case "IRS" -> {
                                 if (agentIRS == null)
