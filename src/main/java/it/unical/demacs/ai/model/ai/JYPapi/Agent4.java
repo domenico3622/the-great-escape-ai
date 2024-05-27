@@ -180,7 +180,9 @@ public class Agent4 implements Agent{
                 //System.out.println(wall.getOrientation());
                 Coordinates coord= new Coordinates(newWall.getRowWall(), newWall.getColWall());
                 game.placeWall(coord, wall.getOrientation(), myPlayer);
+                newWall=null;
             }
+            System.out.println(myPlayer.getWallsAvailable()+" walls available");
             //non so che vogliono ritornati
             //una volta che ho le nuove posizioni e i nuovi muri, devo aggiornare la board nel gioco principale
         }
