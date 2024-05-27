@@ -13,14 +13,28 @@ public class Player
     private Color color;
     private String dirPath;
     private String name;
+    private int illegal;
 
     public Player(Coordinates _coord, Directions _goalDir, Color _color, String _dirPath){
         coord = _coord;
         goalDir = _goalDir;
         wallsAvailable = 10;
         color = _color;
-        dirPath = _dirPath;
         name = "";
+        illegal = 0;
+        dirPath = _dirPath;
+    }
+
+    public String toString() {
+        return "Player: " + name;
+    }
+
+    public int getIllegal() {
+        return illegal;
+    }
+
+    public void addIllegal(){
+        illegal++;
     }
 
     public Coordinates getCoord() { return coord; }

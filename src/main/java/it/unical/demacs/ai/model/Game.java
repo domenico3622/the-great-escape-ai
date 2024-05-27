@@ -4,10 +4,16 @@ import it.unical.demacs.ai.model.Settings.Directions;
 import it.unical.demacs.ai.model.Settings.Orientations;
 //import it.unical.demacs.ai.model.ai.IRS.Agent3;
 import it.unical.demacs.ai.model.ai.inputAgent.InputAgent;
+import it.unical.demacs.ai.model.ai.Agent;
+import it.unical.demacs.ai.model.ai.ASPetta_e_infera.Agent1;
+import it.unical.demacs.ai.model.ai.GrissinVanBon.Agent2Clingo;
+import it.unical.demacs.ai.model.ai.IRS.Agent3;
 import it.unical.demacs.ai.utils.Coordinates;
 import it.unical.demacs.ai.model.ai.JYPapi.Agent4;
 
 import java.util.*;
+
+import com.ibm.icu.text.RelativeDateTimeFormatter.Direction;
 
 public class Game {
 
@@ -20,12 +26,16 @@ public class Game {
     private final Object lock = new Object();
     private Runnable runnable;
 
+    Agent agentASPettaEInfera;
+    Agent agentGrissinVanBon;
+    Agent agentIRS;
+    Agent agentJYPapi;
+
     private Game(){
         runnable = new Runnable() {
             @Override
             public void run() {
-                while (!players.isEmpty())
-                {
+                while (players.size() > 1) {
                     synchronized (lock)
                     {
                         Player current = getCurrentPlayer();
@@ -33,20 +43,45 @@ public class Game {
                         {
                             // per testare le vostre IA
                             // case "nome ia" -> new agentN(parametri vostri).act();
-                            //case "Grissin Van Bon" -> new it.unical.demacs.ai.model.ai.GrissinVanBon.Agent2Clingo(currentActivePlayer).act();
                             case "PALO" -> new InputAgent(current).act();
-                            case "JYPapi" -> new Agent4(current).act();
+                            case "ASPetta e Infera" -> {
+                                if (agentASPettaEInfera == null)
+                                    agentASPettaEInfera = new Agent1(current);
+                                    agentASPettaEInfera.act();
+                            }
+                            case "Grissin Van Bon" -> {
+                                if (agentGrissinVanBon == null)
+                                    agentGrissinVanBon = new Agent2Clingo(current);
+                                agentGrissinVanBon.act();
+                            }
+                            case "IRS" -> {
+                                if (agentIRS == null)
+                                    agentIRS = new Agent3(current);
+                                agentIRS.act();
+                            }
+                            case "JYPapi" -> {
+                                if (agentJYPapi == null)
+                                    agentJYPapi = new Agent4(current);
+                                agentJYPapi.act();
+                            
+                            }
                         }
                         if(winPosition(current, 0, 0)){
                             System.out.println(current.getName() + " ha vinto!");
-                            System.out.println("1");
+                            //System.out.println("1");
                             winners.add(current);
-                            System.out.println("1.5");
+                            //System.out.println("1.5");
                             players.remove(current);
-                            System.out.println("2");
+                            //System.out.println("2");
                         }
                         nextTurn();
                     }
+                }
+                // qui ho finito
+                // stampo i vincitori
+                System.out.println("VINCITORI:");
+                for (Player w : winners){
+                    System.out.println(w + " with illegal moves: " + w.getIllegal());
                 }
             }
         };
@@ -146,6 +181,23 @@ public class Game {
         return false;
     }
 
+    public void moveTo(Coordinates pos){
+        Player player = getCurrentPlayer();
+        if(pos.row - player.getCoord().row == 0){
+            if(pos.column - player.getCoord().column == 1){
+                move(Directions.RIGHT);
+            } else {
+                move(Directions.LEFT);
+            }
+        } else {
+            if(pos.row - player.getCoord().row == 1){
+                move(Directions.DOWN);
+            } else {
+                move(Directions.UP);
+            }
+        }
+        player.setCoord(pos);
+    }
 
     /**
      * metodo per muovere il giocatore attivo nella direzione dir
@@ -153,6 +205,10 @@ public class Game {
      */
     public void move(Directions dir){
         Player player = getCurrentPlayer();
+        if(!canMove(player, 0, 0, dir)){
+            player.addIllegal();
+            return;
+        }
         if (dir == Directions.RIGHT) {
             player.setCoord(new Coordinates(player.getCoord().row, player.getCoord().column + 1));
         } else if (dir == Directions.LEFT) {

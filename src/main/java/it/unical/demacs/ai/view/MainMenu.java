@@ -70,7 +70,7 @@ public class MainMenu extends JPanel{
         EPlayer.setSelectedItem(null);
         WPlayer.setSelectedItem(null);
 
-        sliderWalls = new JSlider(3, 10, 6);
+        sliderWalls = new JSlider(3, 10, 5);
         sliderMatrix = new JSlider(6, 15, 9);
 
         sliderWalls.setPaintTicks(true);
