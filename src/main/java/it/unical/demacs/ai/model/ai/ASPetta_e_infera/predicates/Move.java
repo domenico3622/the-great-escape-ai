@@ -5,7 +5,7 @@ import it.unical.mat.embasp.languages.Id;
 import it.unical.mat.embasp.languages.Param;
 import it.unical.mat.embasp.languages.asp.SymbolicConstant;
 
-@Id("move")
+@Id("moveAspettaEInfera")
 public class Move {
 
     @Param(0)

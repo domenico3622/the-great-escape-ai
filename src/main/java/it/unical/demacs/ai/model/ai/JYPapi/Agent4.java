@@ -17,6 +17,7 @@ import it.unical.mat.embasp.languages.asp.AnswerSet;
 import it.unical.mat.embasp.languages.asp.AnswerSets;
 import it.unical.mat.embasp.platforms.desktop.DesktopHandler;
 import it.unical.mat.embasp.specializations.dlv2.desktop.DLV2DesktopService;
+import it.unical.demacs.ai.model.Settings;
 
 
 import java.lang.reflect.InvocationTargetException;
@@ -81,7 +82,7 @@ public class Agent4 implements Agent{
     @Override
     public void act() {
 
-        handler= new DesktopHandler(new DLV2DesktopService("lib/dlv2.exe"));
+        handler= new DesktopHandler(new DLV2DesktopService(Settings.executablePath("dlv2")));
 
 
         //call alle funzioni per settare le nostre liste di gioco:

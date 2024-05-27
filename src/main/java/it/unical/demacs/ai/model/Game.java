@@ -13,9 +13,6 @@ import it.unical.demacs.ai.utils.Coordinates;
 import it.unical.demacs.ai.model.ai.JYPapi.Agent4;
 
 import java.util.*;
-
-import com.ibm.icu.text.RelativeDateTimeFormatter.Direction;
-
 public class Game {
 
     private static Game game = null;                            // istanza di game
@@ -59,7 +56,7 @@ public class Game {
                             }
                             case "JYPapi" -> {
                                 if (agentJYPapi == null)
-                                    //agentJYPapi = new Agent4(current);
+                                    agentJYPapi = new Agent4(current);
                                 agentJYPapi.act();
                             
                             }
