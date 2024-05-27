@@ -105,7 +105,6 @@ public class Agent3 implements Agent{
                     if(obj instanceof MovePlayer) {
                         movePlayer = (MovePlayer) obj;
                         //System.out.println(movePlayer);
-                        myPlayer.setCoord(new Coordinates(movePlayer.getX(), movePlayer.getY()));
                         Game.getInstance().moveTo(new Coordinates(movePlayer.getX(), movePlayer.getY()));
                     }
                     else if(obj instanceof PlaceWall) {
