@@ -1,0 +1,167 @@
+wall(X2,Y2,X1,Y1,X4,Y4,X3,Y3) :- wall(X1,Y1,X2,Y2,X3,Y3,X4,Y4).
+
+goalVertical(up,0).
+goalHorizontal(left,0).
+goalVertical(down,8).
+goalHorizontal(right,8).
+
+% guess dei movimenti
+move(X+1,Y) | move(X,Y+1) | move(X-1,Y) | move(X,Y-1) | notMove(X,Y) :- player(_,X,Y,D,_), direction(D).
+notMoving :- notMove(X,Y).
+
+% non si va fuori matrice
+:- move(X,Y), X<0.
+:- move(X,Y), Y<0.
+:- move(X,Y), X>8.
+:- move(X,Y), Y>8.
+
+% non devo attraversare un muro
+:- move(X1,Y1), player(_,X2,Y2,D,_), direction(D), wall(X1,Y1,X2,Y2,_,_,_,_).
+:- move(X1,Y1), player(_,X2,Y2,D,_), direction(D), wall(_,_,_,_,X1,Y1,X2,Y2).
+
+% guess del muro da piazzare
+placeWall(X1,Y1,X1,Y1+1,X1+1,Y1,X1+1,Y1+1) | placeWall(X1,Y1,X1+1,Y1,X1,Y1+1,X1+1,Y1+1) | notPlaceWall(X1,Y1) :- cell(X1,Y1), player(_,_,_,D,R), direction(D), R>0, X1 < 8, Y1 < 8.
+
+% non posso piazzare un muro se questo si sovrappone con qualcun altro
+:- placeWall(X1,Y1,X2,Y2,X3,Y3,X4,Y4), wall(X1,Y1,X3,Y3,X2,Y2,X4,Y4).
+:- placeWall(X1,Y1,X2,Y2,X3,Y3,X4,Y4), wall(X1,Y1,X2,Y2,X3,Y3,X4,Y4).
+:- placeWall(X1,Y1,X2,Y2,X3,Y3,X4,Y4), wall(X3,Y3,X4,Y4,_,_,_,_).
+:- placeWall(X1,Y1,X2,Y2,X3,Y3,X4,Y4), wall(_,_,_,_,X1,Y1,X2,Y2).
+
+% se non mi muovo, posso mettere solo un muro
+:- notMoving, #count{X1,Y1,X2,Y2,X3,Y3,X4,Y4: placeWall(X1,Y1,X2,Y2,X3,Y3,X4,Y4)}!=1.
+% o mi muovo o piazzo un muro
+:- placeWall(_,_,_,_,_,_,_,_), move(_,_).
+
+% se mi manca un passo per vincere, mi muovo
+:- placeWall(_,_,_,_,_,_,_,_), minPath(D,1), direction(D).
+
+% mi ricavo i muri singoli (da una cella all'altra)
+smallWall(X1,Y1,X2,Y2) :- wall(X1,Y1,X2,Y2,_,_,_,_).
+smallWall(X1,Y1,X2,Y2) :- wall(_,_,_,_,X1,Y1,X2,Y2).
+smallWall(X1,Y1,X2,Y2) :- placeWall(X1,Y1,X2,Y2,_,_,_,_).
+smallWall(X1,Y1,X2,Y2) :- placeWall(_,_,_,_,X1,Y1,X2,Y2).
+smallWall(X2,Y2,X1,Y1) :- placeWall(X1,Y1,X2,Y2,_,_,_,_).
+smallWall(X2,Y2,X1,Y1) :- placeWall(_,_,_,_,X1,Y1,X2,Y2).
+
+% derivo se posso muovermi da una certa cella ad un'altra
+canMove(X1,Y1,X2,Y1) :- cell(X1,Y1), cell(X2,Y1), X2=X1+1, not smallWall(X1,Y1,X2,Y1).
+canMove(X1,Y1,X2,Y1) :- cell(X1,Y1), cell(X2,Y1), X2=X1-1, not smallWall(X1,Y1,X2,Y1).
+canMove(X1,Y1,X1,Y2) :- cell(X1,Y1), cell(X1,Y2), Y2=Y1+1, not smallWall(X1,Y1,X1,Y2).
+canMove(X1,Y1,X1,Y2) :- cell(X1,Y1), cell(X1,Y2), Y2=Y1-1, not smallWall(X1,Y1,X1,Y2).
+
+% se decido di muovermi, voglio ottenere il nuovo cammino minimo dopo essermi mosso. Proprio per questo
+% inizializzo il cammino a 0, così sembrerà che sia partito dalla nuova cella (dove mi sono spostato).
+% Per il resto, calcolo tutti i cammini normalmente.
+pathPlayer(X1,Y1,X2,Y2,D,0)    :- player(_,X1,Y1,D,_), move(X2,Y2), canMove(X1,Y1,X2,Y2), direction(D).
+pathPlayer(X1,Y1,X2,Y2,D,1)    :- player(_,X1,Y1,D,_), canMove(X1,Y1,X2,Y2), direction(D), placeWall(_,_,_,_,_,_,_,_).
+pathPlayer(X1,Y1,X2,Y2,D,1)    :- player(_,X1,Y1,D,_), canMove(X1,Y1,X2,Y2), direction(D1), D!=D1.
+pathPlayer(X1,Y1,X2,Y2,D,Dist) :- pathPlayer(X1,Y1,X3,Y3,D,Dist1), player(_,X1,Y1,D,_), canMove(X3,Y3,X2,Y2), Dist=Dist1+1, Dist<45.
+
+% numero di passi, per ogni giocatore, che NON deve percorrere per arrivare alla fine
+maximizeStep(D,S) :- minPathPlayer(D,N), direction(Dir), D!=Dir, dim(Dim), S=Dim*Dim-N, notMoving.
+
+% derivo tutti i giocatori col percorso minimo tra tutti quanti
+min(D,M) :- #min{N: minPath(Dir1,N), direction(Dir2), Dir2!=Dir1}=M, minPath(D,M), direction(D2), D!=D2.
+
+
+% il mio target inizialmente è quello che sta al turno dopo di me, a patto che disti dalla vittoria un numero di passi
+% pari ai miei passi con uno scarto di 3.
+%
+% In alternativa, se c'è solo un avversario col percorso minimo (tra tutti quanti) devo per forza scegliere
+% lui come target.
+%
+% Se ne ho più di 2 col percorso minimo, scelgo quello con il più basso, o in alternativa quello che viene prima
+% in termini di turno di gioco.
+alternative1(D) :- next(D), minPath(D,N1), minPath(Dist,N2), direction(Dist), N1<=N2+3.
+alternative2(P) :- not alternative1(D), next(D), min(P,_), #count{Y: min(Y,_)}=1.
+alternative2(P1) :- not alternative1(D), next(D), min(P1,_), player(N1,_,_,P1,M1), min(P2,_), player(N2,_,_,P2,M2), P1!=P2, M1<M2.
+alternative2(P1) :- not alternative1(D), next(D), min(P1,_), player(N1,_,_,P1,M1), min(P2,_), player(N2,_,_,P2,M1), P1!=P2, N1<N2.
+target(D) :- alternative1(D).
+target(D) :- alternative2(D).
+
+% derivo se lo scarto di passi tra me e qualche giocatore è maggiore o uguale a 2
+notEquality :- minPath(D,N), direction(D), minPath(D2,N2), D2!=D, &abs(N-N2;K), K>=2.
+
+% derivo se al mio avversario mancano 1 o due passi dalla fine, e a me ne mancano di più
+notEquality :- minPath(D,N), target(D), N<=2, minPath(D1,N1), direction(D1), N<N1.
+
+% Se la situazione iniziale è equilibrata, e piazzando un muro mi accorgo di non aver allungato di tanto il percorso
+% al mio target, allora devo muovermi
+longerPath :- minPath(D,N), target(D), minPathPlayer(D,N2), N2>=N+6.
+:- direction(D), not notEquality, placeWall(_,_,_,_,_,_,_,_), not longerPath, not over.
+
+% non è possibile che, se nella mappa non sono ancora stati piazzati muri e il mio target è lontano dalla fine
+% più di 3 passi, io non mi stia muovendo
+theresWall :- wall(_,_,_,_,_,_,_,_).
+:- not theresWall, notMoving, minPath(D,N),target(D), N>3.
+
+% nel caso venga piazzato un muro, mi assicuro che tutti i giocatori riescono a raggiungere il traguardo
+goal(D) :- pathPlayer(X1,Y1,_,C,D,_), player(_,X1,Y1,D,_), goalHorizontal(D,C).
+goal(D) :- pathPlayer(X1,Y1,R,_,D,_), player(_,X1,Y1,D,_), goalVertical(D,R).
+:- player(_,_,_,D,_), not goal(D).
+
+% derivo il cammino minimo per il traguardo, per ogni giocatore
+minPathPlayer(D,N) :- #min{Dist: pathPlayer(X1,Y1,X2,C,D,Dist), goalHorizontal(D,C)}=N, N<=Dim*Dim, dim(Dim), player(_,X1,Y1,D,_).
+minPathPlayer(D,N) :- #min{Dist: pathPlayer(X1,Y1,R,Y2,D,Dist), goalVertical(D,R)}=N, N<=Dim*Dim, dim(Dim), player(_,X1,Y1,D,_).
+
+% se noto che piazzando un muro, questo mi allunga di 5 passi il percorso minimo, derivo un muro sovrapposto,
+% a patto che quest ultimo non si sovrapponga con qualche altro muro
+overWall(X1,Y1,X2,Y2,X3,Y3,X4,Y4) :- placeWall(X1,Y1,X3,Y3,X2,Y2,X4,Y4), minPath(D,N), direction(D), minPathPlayer(D,N2), N2>=N+5.
+:- overWall(X1,Y1,X2,Y2,X3,Y3,X4,Y4), wall(X3,Y3,X4,Y4,_,_,_,_).
+:- overWall(X1,Y1,X2,Y2,X3,Y3,X4,Y4), wall(_,_,_,_,X1,Y1,X2,Y2).
+
+
+posOver(X,Y) :- overWall(X,Y,_,_,_,_,_,_).
+posOver(X,Y) :- overWall(_,_,X,Y,_,_,_,_).
+posOver(X,Y) :- overWall(_,_,_,_,X,Y,_,_).
+posOver(X,Y) :- overWall(_,_,_,_,_,_,X,Y).
+
+% derivo se mi trovo su una delle quattro cordinate del muro
+cantPutOver :- player(_,X,Y,D,_), direction(D), posOver(X,Y).
+
+% derivo se esiste un muro da mettere al contrario, e se io non mi trovo su una delle sue coordinate
+over :- overWall(_,_,_,_,_,_,_,_), not cantPutOver.
+
+% se noto che piazzando un muro il percorso del mio target non è cambiato, e non ho trovato un muro da mettere
+% al contrario, devo muovermi
+:- placeWall(_,_,_,_,_,_,_,_), minPath(D,N), target(D), minPathPlayer(D,N), not over.
+
+
+% WEAK CONSTRAINTS
+
+% pago sempre se non metto un muro sovrapposto in maniera tale che se lo devo
+% mettere si scelga l'AS che lo comprende.
+:~ not over.[1@7]
+
+% non vorrei che se siamo rimasti in due, dopo aver piazzato un muro, ho aumentato maggiormente il mio percorso
+% rispetto al mio avversario. Questo perché quando si è rimasti in due accetto di allungarmi il percorso
+% a patto che lo allungo maggiormente al mio avversario
+:~ #count{D: player(_,_,_,D,_)}=2, placeWall(_,_,_,_,_,_,_,_), minPath(D1,N1), direction(D1), minPathPlayer(D1,N2), minPath(D2,N3), D2!=D1, minPathPlayer(D2,N4), N2 - N1 > N4 - N3. [1@6]
+
+% non vorrei che se siamo rimasti in due, dopo aver piazzato un muro, mi sono allungato il percorso minimo e che
+% il mio nuovo numero di passi per arrivare al traguardo sia maggiore del nuovo numero di passi dell'altro
+:~ #count{D: player(_,_,_,D,_)}=2, placeWall(_,_,_,_,_,_,_,_), minPath(D1,N1), direction(D1), minPathPlayer(D1,N2), minPath(D2,N3), D2!=D1, minPathPlayer(D2,N4), N2>N1, N4 < N2. [1@5]
+
+% vorrei evitare di piazzare muri, nel caso me ne siano rimasti 2 o meno, e sia io che il mio target distiamo più
+% di 4 passi dal traguardo.
+%
+% Inoltre non vorrei piazzare un muro se mi sono allungato il percorso minimo
+:~ player(_,_,_,D,R), direction(D), R<=2, placeWall(_,_,_,_,_,_,_,_), minPath(D,N1), target(D2), minPath(D2,N2), D2!=D, N1>4, N2>4.[1@4]
+:~ placeWall(_,_,_,_,_,_,_,_), minPath(D,N1), direction(D), minPathPlayer(D,N2), N2>N1.[1@4]
+
+% non vorrei piazzare un muro se sono più vicino al traguardo di 2 passi rispetto al mio target.
+%
+% Inoltre, se mi muovo, voglio minimizzare il numero di passi dalla vittoria
+:~ placeWall(_,_,_,_,_,_,_,_), minPath(D1,N1), target(D1), minPath(D2,N2), direction(D2), N2+2<=N1.[1@3]
+:~ move(_,_), minPathPlayer(D,N), direction(D).[N@3]
+
+% vorrei massimizzare il numero di passi per arrivare alla vittoria prima al mio target, poi per ogni altro giocatore.
+:~ maximizeStep(D,S), target(D).[S@2,D]
+:~ maximizeStep(D,S).[S@1,D]
+
+
+
+#show overWall/8.
+#show move/2.
+#show placeWall/8.

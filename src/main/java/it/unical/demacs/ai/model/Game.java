@@ -54,7 +54,7 @@ public class Game {
                             }
                             case "IRS" -> {
                                 if (agentIRS == null)
-                                    //agentIRS = new Agent3(current);
+                                    agentIRS = new Agent3(current);
                                 agentIRS.act();
                             }
                             case "JYPapi" -> {
