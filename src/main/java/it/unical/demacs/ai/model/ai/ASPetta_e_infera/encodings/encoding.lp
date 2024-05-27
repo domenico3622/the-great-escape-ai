@@ -25,8 +25,8 @@ costLimit(N) :- #count{P1, P2 : wallWithoutId(P1, P2)} = N1, dimension(D), N = D
 
 
 % guess sulla mossa da fare
-move(down) | move(up) | move(right) | move(left) | noMove(h) | noMove(v).
-yesMove :- move(X).
+moveAspettaEInfera(down) | moveAspettaEInfera(up) | moveAspettaEInfera(right) | moveAspettaEInfera(left) | noMove(h) | noMove(v).
+yesMove :- moveAspettaEInfera(X).
 noMove :- noMove(X).
 :- noMove, numWallsAvailable(P, N), N=0, me(P).
 { inWallLong(pos(R, C), pos(R+1, C), pos(R, C+1), pos(R+1, C+1)) :
@@ -51,14 +51,14 @@ inWall(Pos1, Pos2) :- inWallLong(_, _, Pos1, Pos2).
 :- inWall(Pos1, Pos2), inWall(Pos3, Pos4), wall(Id, Pos1, Pos3), wall(Id, Pos2, Pos4), wallId(Id). % controllo che due muri non si intersecano
 
 %check sulle mose
-:- move(down), me(P), player(P, pos(R, C), D), dimension(R).
-:- move(up), me(P), player(P, pos(R, C), D), R = 1.
-:- move(right), me(P), player(P, pos(R, C), D), dimension(C).
-:- move(left), me(P), player(P, pos(R, C), D), C = 1.
-:- move(down), me(P), player(P, pos(R, C), D), wallWithoutId(pos(R, C), pos(R+1, C)).
-:- move(up), me(P), player(P, pos(R, C), D), wallWithoutId(pos(R, C), pos(R-1, C)).
-:- move(right), me(P), player(P, pos(R, C), D), wallWithoutId(pos(R, C), pos(R, C+1)).
-:- move(left), me(P), player(P, pos(R, C), D), wallWithoutId(pos(R, C), pos(R, C-1)).
+:- moveAspettaEInfera(down), me(P), player(P, pos(R, C), D), dimension(R).
+:- moveAspettaEInfera(up), me(P), player(P, pos(R, C), D), R = 1.
+:- moveAspettaEInfera(right), me(P), player(P, pos(R, C), D), dimension(C).
+:- moveAspettaEInfera(left), me(P), player(P, pos(R, C), D), C = 1.
+:- moveAspettaEInfera(down), me(P), player(P, pos(R, C), D), wallWithoutId(pos(R, C), pos(R+1, C)).
+:- moveAspettaEInfera(up), me(P), player(P, pos(R, C), D), wallWithoutId(pos(R, C), pos(R-1, C)).
+:- moveAspettaEInfera(right), me(P), player(P, pos(R, C), D), wallWithoutId(pos(R, C), pos(R, C+1)).
+:- moveAspettaEInfera(left), me(P), player(P, pos(R, C), D), wallWithoutId(pos(R, C), pos(R, C-1)).
 
 % calcolo le posizioni obiettivo
 obj(D, pos(R, Dim)) :- node(pos(R, Dim)), D = right, dimension(Dim).
@@ -82,10 +82,10 @@ newWall(Pos1, Pos2) :- wallWithoutId(Pos1, Pos2).
 newWall(Pos1, Pos2) :- inWall(Pos1, Pos2).
 newWall(Pos1, Pos2) :- inWall(Pos2, Pos1).
 
-newPos(pos(R+1, C)) :- player(P, pos(R, C), _), me(P), move(down).
-newPos(pos(R-1, C)) :- player(P, pos(R, C), _), me(P), move(up).
-newPos(pos(R, C+1)) :- player(P, pos(R, C), _), me(P), move(right).
-newPos(pos(R, C-1)) :- player(P, pos(R, C), _), me(P), move(left).
+newPos(pos(R+1, C)) :- player(P, pos(R, C), _), me(P), moveAspettaEInfera(down).
+newPos(pos(R-1, C)) :- player(P, pos(R, C), _), me(P), moveAspettaEInfera(up).
+newPos(pos(R, C+1)) :- player(P, pos(R, C), _), me(P), moveAspettaEInfera(right).
+newPos(pos(R, C-1)) :- player(P, pos(R, C), _), me(P), moveAspettaEInfera(left).
 newPos(Pos) :- noMove, player(P, Pos, _), me(P).
 
 % calcolo i cammini dopo
@@ -122,11 +122,11 @@ playerNearWin(P) :- player(P, _, _), lenPathBefore(P, N), N <= 3.
 :~ me(P), lenPathAfter(P, N), yesMove. [N@1]
 
 % output muri da piazzare
-placeWall(R1, C1, R2, C2, R3, C3, R4, C4, vertical) :- inWall(pos(R1, C1), pos(R2, C2)), inWall(pos(R3, C3), pos(R4, C4)), R1 < R3.
-placeWall(R1, C1, R2, C2, R3, C3, R4, C4, horizontal) :- inWall(pos(R1, C1), pos(R2, C2)), inWall(pos(R3, C3), pos(R4, C4)), C1 < C3.
+placeWallAspettaEInfera(R1, C1, R2, C2, R3, C3, R4, C4, vertical) :- inWall(pos(R1, C1), pos(R2, C2)), inWall(pos(R3, C3), pos(R4, C4)), R1 < R3.
+placeWallAspettaEInfera(R1, C1, R2, C2, R3, C3, R4, C4, horizontal) :- inWall(pos(R1, C1), pos(R2, C2)), inWall(pos(R3, C3), pos(R4, C4)), C1 < C3.
 
-#show placeWall/9.
-#show move/1.
+#show placeWallAspettaEInfera/9.
+#show moveAspettaEInfera/1.
 #show dif/2.
 #show lenPathBefore/2.
 #show lenPathAfter/2.

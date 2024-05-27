@@ -36,7 +36,7 @@ public class Agent3 implements Agent{
         overWall=null;
         placeWall=null;
         movePlayer=null;
-        handler = new DesktopHandler(new DLV2DesktopService("lib/dlv2.exe"));
+        handler = new DesktopHandler(new DLV2DesktopService(Settings.executablePath("dlv2")));
         try {
             ASPMapper.getInstance().registerClass(PlayerAtom.class);
             ASPMapper.getInstance().registerClass(WallAtom.class);

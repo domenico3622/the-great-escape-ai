@@ -6,7 +6,7 @@ import it.unical.mat.embasp.languages.asp.SymbolicConstant;
 import it.unical.demacs.ai.model.Settings;
 import it.unical.demacs.ai.utils.Coordinates;
 
-@Id("placeWall")
+@Id("placeWallAspettaEInfera")
 public class InWall {
 
     @Param(0)
