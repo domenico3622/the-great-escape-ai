@@ -27,7 +27,7 @@ public class Agent1 implements Agent {
 
     public Agent1(Player p){
         System.out.println("Agent1");
-        String pathToSolver = selectSolverDLV();
+        String pathToSolver = Settings.executablePath("dlv2");
         handler = new DesktopHandler(new DLV2DesktopService(pathToSolver));
 
         try {
@@ -44,7 +44,7 @@ public class Agent1 implements Agent {
 
     public Agent1() {
         System.out.println("Agent1");
-        String pathToSolver = selectSolverDLV();
+        String pathToSolver = Settings.executablePath("dlv2");
         handler = new DesktopHandler(new DLV2DesktopService(pathToSolver));
 
         try {
@@ -57,30 +57,6 @@ public class Agent1 implements Agent {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-
-    private String selectSolverDLV() {
-        String os = System.getProperty("os.name").toLowerCase();
-        if (os.contains("win")) {
-            return "lib/dlv2.exe";
-        } else if (os.contains("nix") || os.contains("nux")) {
-            return "lib/dlv2";
-        } else if (os.contains("mac")) {
-            return "lib/dlv2-mac";
-        }
-        return null;
-    }
-
-    private String selectSolverClingo() {
-        String os = System.getProperty("os.name").toLowerCase();
-        if (os.contains("win")) {
-            return "lib/clingo.exe";
-        } else if (os.contains("nix") || os.contains("nux")) {
-            return "lib/clingo";
-        } else if (os.contains("mac")) {
-            return "lib/clingo-mac";
-        }
-        return null;
     }
 
     @Override

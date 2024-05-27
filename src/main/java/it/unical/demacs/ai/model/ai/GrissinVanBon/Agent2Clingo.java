@@ -34,7 +34,7 @@ public class Agent2Clingo implements Agent{
     @Override
     public void act() {
         // Apre il file in modalità scrittura e lo chiude immediatamente, svuotandolo
-        handler = new DesktopHandler(new ClingoDesktopService("lib/clingo.exe"));
+        handler = new DesktopHandler(new ClingoDesktopService(Settings.executablePath("clingo")));
 
         //OptionDescriptor option=new OptionDescriptor("-n=1"+" --printonlyoptimum");
         //handler.addOption(option);

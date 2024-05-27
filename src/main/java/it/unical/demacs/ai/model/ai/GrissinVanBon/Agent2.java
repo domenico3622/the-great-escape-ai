@@ -30,7 +30,7 @@ public class Agent2 implements Agent{
 
     @Override
     public void act() {
-        handler = new DesktopHandler(new DLV2DesktopService("lib/dlv2.exe"));
+        handler = new DesktopHandler(new DLV2DesktopService(Settings.executablePath("dlv2")));
 
         //OptionDescriptor option=new OptionDescriptor("-n=1"+" --printonlyoptimum");
         //handler.addOption(option);
