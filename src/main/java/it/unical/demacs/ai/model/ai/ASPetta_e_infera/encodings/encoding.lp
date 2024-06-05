@@ -23,7 +23,6 @@ numWallsAvailable(P, N) :- playerRaw(P, _, _, _, N).
 wallId(Id) :- wall(Id, _, _).
 costLimit(N) :- #count{P1, P2 : wallWithoutId(P1, P2)} = N1, dimension(D), N = D + N1.
 
-
 % guess sulla mossa da fare
 moveAspettaEInfera(down) | moveAspettaEInfera(up) | moveAspettaEInfera(right) | moveAspettaEInfera(left) | noMove(h) | noMove(v).
 yesMove :- moveAspettaEInfera(X).
@@ -91,7 +90,7 @@ newPos(Pos) :- noMove, player(P, Pos, _), me(P).
 % calcolo i cammini dopo
 inPathAfter(P, Pos1, Pos2, 1) :- newPos(Pos1), edge(Pos1, Pos2), not newWall(Pos1, Pos2), me(P).
 inPathAfter(P, Pos1, Pos2, 1) :- player(P, Pos1, _), edge(Pos1, Pos2), not newWall(Pos1, Pos2), not me(P), noMove.
-inPathAfter(P, Pos1, Pos2, N) :- player(P, _, D), inPathAfter(P, _, Pos1, N1), edge(Pos1, Pos2), not newWall(Pos1, Pos2), N = N1 + 1, not obj(D, Pos1), N < Cost, costLimit(Cost).
+inPathAfter(P, Pos1, Pos2, N) :- player(P, _, D), inPathAfter(P, _, Pos1, N1), edge(Pos1, Pos2), not newWall(Pos1, Pos2), N = N1 + 1, N < Cost, costLimit(Cost).
 lenPathAfter(P, N) :- player(P, _, D), #min{N1 : inPathAfter(P, _, Pos, N1), obj(D, Pos)} = N, me(P).
 lenPathAfter(P, N) :- player(P, _, D), #min{N1 : inPathAfter(P, _, Pos, N1), obj(D, Pos)} = N, not me(P), noMove.
 arriveInAfter(P) :- inPathAfter(P, _, Pos, _), player(P, _, D), obj(D, Pos).
@@ -104,7 +103,13 @@ iAmFirst :- lenPathBefore(P, N), me(P), #min{N1 : lenPathBefore(P1, N1)} = N.
 
 firstEnemy(P) :- not iAmFirst, lenPathBefore(P, N), #min{N1 : lenPathBefore(P1, N1)} = N.
 
-playerNearWin(P) :- player(P, _, _), lenPathBefore(P, N), N <= 3.
+playerNearWin(P) :- player(P, _, _), lenPathBefore(P, N), N <= 3. 
+
+% Se ho vinto alla prossima mossa devo muovermi sulla casella obiettivo
+:- moveAspettaEInfera(D), D != up, me(P), player(P, pos(R, C), D1), obj(D1, pos(R-1, C)), not wallWithoutId(pos(R, C), pos(R-1, C)).
+:- moveAspettaEInfera(D), D != down, me(P), player(P, pos(R, C), D1), obj(D1, pos(R+1, C)), not wallWithoutId(pos(R, C), pos(R+1, C)).
+:- moveAspettaEInfera(D), D != left, me(P), player(P, pos(R, C), D1), obj(D1, pos(R, C-1)), not wallWithoutId(pos(R, C), pos(R, C-1)).
+:- moveAspettaEInfera(D), D != right, me(P), player(P, pos(R, C), D1), obj(D1, pos(R, C+1)), not wallWithoutId(pos(R, C), pos(R, C+1)).
 
 %%%  weak constraints: %%%
 
@@ -115,11 +120,15 @@ playerNearWin(P) :- player(P, _, _), lenPathBefore(P, N), N <= 3.
 
 :~ playerNearWin(P), yesMove. [1@4, P]
 
-:~ dif(P, N), firstEnemy(P), N1 = 100 - N, Res = N1 * 5. [Res@3, P, Res]
-:~ dif(P, N), N1 = 100 - N, Res = N1 * 3, not me(P). [Res@3, P, Res]
-:~ dif(P, N), me(P), noMove, N1 = N*20. [N1@3]
+:~ dif(P, N), firstEnemy(P), N1 = 100 - N, Res = N1 * 6. [Res@3, P, Res]
+:~ dif(P, N), N1 = 100 - N, Res = N1 * 2, not me(P). [Res@3, P, Res]
+:~ dif(P, N), me(P), noMove, N1 = N*30. [N1@3]
 
-:~ me(P), lenPathAfter(P, N), yesMove. [N@1]
+% Quando mi muovo, devo andare verso la vittoria
+:~ me(P), lenPathAfter(P, N), yesMove. [N@2]
+
+% Tra le mosse possibili, scelgo quella che mi fa stare più vicino al centro
+:~ me(P), dimension(N), newPos(pos(R, C)), N1 = N/2, difR = abs(R-N1), difC = abs(C-N1), Res = difR + difC. [Res@1] 
 
 % output muri da piazzare
 placeWallAspettaEInfera(R1, C1, R2, C2, R3, C3, R4, C4, vertical) :- inWall(pos(R1, C1), pos(R2, C2)), inWall(pos(R3, C3), pos(R4, C4)), R1 < R3.
@@ -127,9 +136,3 @@ placeWallAspettaEInfera(R1, C1, R2, C2, R3, C3, R4, C4, horizontal) :- inWall(po
 
 #show placeWallAspettaEInfera/9.
 #show moveAspettaEInfera/1.
-#show dif/2.
-#show lenPathBefore/2.
-#show lenPathAfter/2.
-#show playerNearWin/1.
-#show me/1.
-#show costLimit/1.
