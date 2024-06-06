@@ -82,7 +82,7 @@ pathCostN(R1,C,R2,C,1):- closeCells(R1,C,R2,C), nextPos(R1,C), R2=R1+1, not newW
 pathCostN(R1,C,R2,C,1):- closeCells(R1,C,R2,C), nextPos(R1,C), R2=R1-1, not newWall(R2,C-1,"H"), not newWall(R2,C,"H").
 pathCostN(R,C1,R,C2,1):- closeCells(R,C1,R,C2), nextPos(R,C1), C2=C1+1, not newWall(R, C1,"V"), not newWall(R-1, C1, "V").
 pathCostN(R,C1,R,C2,1):- closeCells(R,C1,R,C2), nextPos(R,C1), C2=C1-1, not newWall(R-1,C2,"V"), not newWall(R,C2,"V").
-pathCostN(R1,C1,R1,C1,0):- nextPos(R1,C1), goals(Ob,R1,C1), player(ID,Ob,_,R1,C1), myId(ID).
+pathCostN(R1,C1,R1,C1,0):- nextPos(R1,C1), goals(Ob,R1,C1), player(ID,Ob,_,_,_), myId(ID).
 
 
 pathCostN(R1,C1,R3,C3,Cost):- pathCostN(R1,C1,R2,C2,Z), nextPos(R1,C1), closeCells(R2,C2,R3,C3), Cost=Z+1, R3=R2+1, not newWall(R2,C2,"H"), not newWall(R2,C2-1,"H"), Cost<30.
@@ -135,9 +135,3 @@ minPathCostNextPos(ID,R1,C1,R2,C2,Cost):- pathCostN(R1,C1,R2,C2,Cost), goals(Ob,
 
 %se sono a meno di 3 passi dall'obiettivo, camminiamo
 :~ minPathCost(ID,R1,C1,R2,C2,Cost), Cost<3, myId(ID), player(ID,Ob,_,_,_), goals(Ob,R2,C2), newWall(_,_,_). [2@3]
-
-%se la prossima cella è un goal, ci andiamo
-%:- not nextPos(R-1,C), player(ID,"N",_,R,C), myId(ID), goals(Ob,R-1,C).
-%:- not nextPos(R+1,C), player(ID,"S",_,R,C), myId(ID), goals(Ob,R+1,C).
-%:- not nextPos(R,C-1), player(ID,"W",_,R,C), myId(ID), goals(Ob,R,C-1).
-%:- not nextPos(R,C+1), player(ID,"E",_,R,C), myId(ID), goals(Ob,R,C+1).
