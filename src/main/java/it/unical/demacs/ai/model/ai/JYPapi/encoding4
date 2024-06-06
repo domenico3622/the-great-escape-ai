@@ -135,23 +135,8 @@ minPathCostNextPos(ID,R1,C1,R2,C2,Cost):- pathCostN(R1,C1,R2,C2,Cost), goals(Ob,
 %se sono a meno di 3 passi dall'obiettivo, camminiamo
 :~ minPathCost(ID,R1,C1,R2,C2,Cost), Cost<3, myId(ID), player(ID,Ob,_,_,_), goals(Ob,R2,C2), newWall(_,_,_). [2@3]
 
-%se metto un muro non deve aumentare il mio cammino minimo
-% Calcoliamo ora tutti i percorsi possibili fino all’obiettivo, usando la ricorsione, partendo dal player
-% prima calcoliamo i percorsi minimi per le celle adiacenti a quella in cui si trova il player
-pathCostNotNW(R1,C,R2,C,1):- closeCells(R1,C,R2,C), player(_,_,_,R1,C), R2=R1+1.
-pathCostNotNW(R1,C,R2,C,1):- closeCells(R1,C,R2,C), player(_,_,_,R1,C), R2=R1-1.
-pathCostNotNW(R,C1,R,C2,1):- closeCells(R,C1,R,C2), player(_,_,_,R,C1), C2=C1+1.
-pathCostNotNW(R,C1,R,C2,1):- closeCells(R,C1,R,C2), player(_,_,_,R,C1), C2=C1-1.
-
-% poi calcoliamo i percorsi minimi per le altre celle.
-pathCostNotNW(R1,C1,R3,C3,Cost):- pathCostNotNW(R1,C1,R2,C2,Z), player(_,_,_,R1,C1), closeCells(R2,C2,R3,C3), Cost=Z+1, R3=R2+1, Cost<30.
-
-pathCostNotNW(R1,C1,R3,C3,Cost):- pathCostNotNW(R1,C1,R2,C2,Z), player(_,_,_,R1,C1), closeCells(R2,C2,R3,C3), Cost=Z+1, R3=R2-1, Cost<30.
-
-pathCostNotNW(R1,C1,R3,C3,Cost):- pathCostNotNW(R1,C1,R2,C2,Z), player(_,_,_,R1,C1), closeCells(R2,C2,R3,C3), Cost=Z+1, C3=C2+1, Cost<30.
-
-pathCostNotNW(R1,C1,R3,C3,Cost):- pathCostNotNW(R1,C1,R2,C2,Z), player(_,_,_,R1,C1), closeCells(R2,C2,R3,C3), Cost=Z+1, C3=C2-1,  Cost<30.
-
-minPathCostNotNW(ID,R1,C1,R2,C2,Cost):- pathCostNotNW(R1,C1,R2,C2,Cost), goals(Ob,R2,C2), player(ID,Ob,_,R1,C1), Cost=#min{Z: pathCostNotNW(R1,C1,R4,C4,Z), goals(Ob,R4,C4)}.
-
-:- minPathCostNotNW(ID,_,_,_,_,Cost), minPathCost(ID,_,_,_,_,Cost2), Cost<Cost2, myId(ID).
+%se la prossima cella è un goal, ci andiamo
+:- not nextPos(R-1,C), player(ID,"N",_,R,C), myId(ID), goals(Ob,R-1,C).
+:- not nextPos(R+1,C), player(ID,"S",_,R,C), myId(ID), goals(Ob,R+1,C).
+:- not nextPos(R,C-1), player(ID,"W",_,R,C), myId(ID), goals(Ob,R,C-1).
+:- not nextPos(R,C+1), player(ID,"E",_,R,C), myId(ID), goals(Ob,R,C+1).
