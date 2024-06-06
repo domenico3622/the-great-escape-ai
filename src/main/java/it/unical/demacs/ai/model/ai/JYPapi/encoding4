@@ -1,0 +1,139 @@
+rows(0..8).
+cols(0..8).
+
+cell(R,C) :- rows(R), cols(C).
+
+% per salvarci i muri senza l'orientamento, proiettiamo su un predicato wallNotOr
+wallNotOr(X,Y):- wall(X,Y,_). %per salvarci i muri senza l'orientamento
+
+%i due tipi di orientamento che possono avere i muri
+orientation("H").
+orientation("V").
+
+% numero di giocatori calcolato grazie agli aggregati
+numPlayer(X):- #count{ID: player(ID,_,_,_,_)}=X.
+
+
+%Per trovare le celle adiacenti, verso destra, sinistra, in basso e in alto. Non sono considerate adiacenti celle che hanno muri che bloccano il passaggio da una all’altra.
+closeCells(R1,C,R2,C):- cell(R1,C), cell(R2,C), R2=R1+1, not wall(R1,C,"H"), not wall(R1,C-1,"H").
+closeCells(R1,C,R2,C):- cell(R1,C), cell(R2,C), R2=R1-1, not wall(R2,C-1,"H"), not wall(R2,C,"H").
+closeCells(R,C1,R,C2):- cell(R,C1), cell(R,C2), C2=C1+1, not wall(R, C1,"V"), not wall(R-1, C1, "V").
+closeCells(R,C1,R,C2):- cell(R,C1), cell(R,C2), C2=C1-1, not wall(R-1,C2,"V"), not wall(R,C2,"V").
+
+% definiamo gli obiettivi dei giocatori
+goals("N",0,C):-cols(C).
+goals("S",8,C):-cols(C).
+goals("W",R,0):-rows(R).
+goals("E",R,8):-rows(R).
+
+%Guess
+
+%trovo una nuova posizione per il giocatore oppure un nuovo muro da piazzare (se il giocatore ha ancora muri disponibili, NW>0)
+nextPos(NR,NC)|notNextPos(NR,NC):- cell(NR,NC), player(ID,_,_,R,C), myId(ID), closeCells(R,C,NR,NC).
+newWall(R,C,Or)|notNewWall(R,C,Or):- cell(R,C), not wallNotOr(R,C), orientation(Or), player(ID,_,NW,_,_), myId(ID), R<8, C<8, NW>0.
+
+
+%Check
+
+% contiamo il numero di nuove posizioni e di nuovi muri, per poi controllare che siano al massimo uno ciascuno.
+numNextPos(N):- #count{NR,NC : nextPos(NR,NC)}=N.
+numNewWall(N):-#count{R,C,Or : newWall(R,C,Or)}=N.
+
+%Controllo che non mi restituisca più di una nuova posizione.
+:- numNextPos(X), X>1.
+%Controllo che non mi restituisca più di un nuovo muro
+:- numNewWall(X), X>1.
+
+%Controllo che se ho una nuova posizione, non ho un nuovo muro
+:-numNextPos(1), not numNewWall(0).
+
+%Controllo che se ho un nuovo muro, non ho una nuova posizione
+:-numNextPos(0), not numNewWall(1).
+
+%Controllo che mi venga restituita almeno una mossa tra le due possibili (muro o posizione)
+:-numNextPos(0), numNewWall(0).
+
+%Controllo che non ho piazzato un nuovo muro, se non me ne sono rimasti (Già nel guess)
+
+%Controllo che il muro non si incroci con un altro (metà già fatto sopra nel guess)
+
+:- newWall(R,C,"H"), wall(R,C+1,"H").
+:- newWall(R,C,"V"), wall(R+1,C,"V").
+:- newWall(R,C,"H"), wall(R,C-1,"H").
+:- newWall(R,C,"V"), wall(R-1,C,"V").
+
+%Calcoliamo ora tutti i percorsi possibili fino all’obiettivo, usando la ricorsione, partendo dal player
+% prima calcoliamo i percorsi minimi per le celle adiacenti a quella in cui si trova il player
+pathCost(R1,C,R2,C,1):- closeCells(R1,C,R2,C), player(_,_,_,R1,C), R2=R1+1, not newWall(R1,C,"H"), not newWall(R1,C-1,"H").
+pathCost(R1,C,R2,C,1):- closeCells(R1,C,R2,C), player(_,_,_,R1,C), R2=R1-1, not newWall(R2,C-1,"H"), not newWall(R2,C,"H").
+pathCost(R,C1,R,C2,1):- closeCells(R,C1,R,C2), player(_,_,_,R,C1), C2=C1+1, not newWall(R, C1,"V"), not newWall(R-1, C1, "V").
+pathCost(R,C1,R,C2,1):- closeCells(R,C1,R,C2), player(_,_,_,R,C1), C2=C1-1, not newWall(R-1,C2,"V"), not newWall(R,C2,"V").
+
+% poi calcoliamo i percorsi minimi per le altre celle.
+pathCost(R1,C1,R3,C3,Cost):- pathCost(R1,C1,R2,C2,Z), player(_,_,_,R1,C1), closeCells(R2,C2,R3,C3), Cost=Z+1, R3=R2+1, not newWall(R2,C2,"H"), not newWall(R2,C2-1,"H"), Cost<30.
+
+pathCost(R1,C1,R3,C3,Cost):- pathCost(R1,C1,R2,C2,Z), player(_,_,_,R1,C1), closeCells(R2,C2,R3,C3), Cost=Z+1, R3=R2-1, not newWall(R3,C2-1,"H"), not newWall(R3,C2,"H"), Cost<30 .
+
+pathCost(R1,C1,R3,C3,Cost):- pathCost(R1,C1,R2,C2,Z), player(_,_,_,R1,C1), closeCells(R2,C2,R3,C3), Cost=Z+1, C3=C2+1, not newWall(R2,C2,"V"), not newWall(R2-1,C2-1,"V"), Cost<30.
+
+pathCost(R1,C1,R3,C3,Cost):- pathCost(R1,C1,R2,C2,Z), player(_,_,_,R1,C1), closeCells(R2,C2,R3,C3), Cost=Z+1, C3=C2-1, not newWall(R2-1,C3,"V"), not newWall(R2-1,C3,"V"), Cost<30.
+
+
+%questo calcola tutti i percorsi possibili partendo dalla nuova posizione
+pathCostN(R1,C,R2,C,1):- closeCells(R1,C,R2,C), nextPos(R1,C), R2=R1+1, not newWall(R1,C,"H"), not newWall(R1,C-1,"H").
+pathCostN(R1,C,R2,C,1):- closeCells(R1,C,R2,C), nextPos(R1,C), R2=R1-1, not newWall(R2,C-1,"H"), not newWall(R2,C,"H").
+pathCostN(R,C1,R,C2,1):- closeCells(R,C1,R,C2), nextPos(R,C1), C2=C1+1, not newWall(R, C1,"V"), not newWall(R-1, C1, "V").
+pathCostN(R,C1,R,C2,1):- closeCells(R,C1,R,C2), nextPos(R,C1), C2=C1-1, not newWall(R-1,C2,"V"), not newWall(R,C2,"V").
+
+
+pathCostN(R1,C1,R3,C3,Cost):- pathCostN(R1,C1,R2,C2,Z), nextPos(R1,C1), closeCells(R2,C2,R3,C3), Cost=Z+1, R3=R2+1, not newWall(R2,C2,"H"), not newWall(R2,C2-1,"H"), Cost<30.
+
+pathCostN(R1,C1,R3,C3,Cost):- pathCostN(R1,C1,R2,C2,Z), nextPos(R1,C1), closeCells(R2,C2,R3,C3), Cost=Z+1, R3=R2-1, not newWall(R3,C2-1,"H"), not newWall(R3,C2,"H"), Cost<30.
+
+pathCostN(R1,C1,R3,C3,Cost):- pathCostN(R1,C1,R2,C2,Z), nextPos(R1,C1), closeCells(R2,C2,R3,C3), Cost=Z+1, C3=C2+1, not newWall(R2,C2,"V"), not newWall(R2-1,C2-1,"V"), Cost<30.
+
+pathCostN(R1,C1,R3,C3,Cost):- pathCostN(R1,C1,R2,C2,Z), nextPos(R1,C1), closeCells(R2,C2,R3,C3), Cost=Z+1, C3=C2-1, not newWall(R2-1,C3,"V"), not newWall(R2-1,C3,"V"), Cost<30.
+%%fine del calcolo di tutti i percorsi
+
+% OPTIMIZE ----------------------------------------------------------------------------------------
+
+%Controllo che se ho un nuovo muro, non chiudo la strada a un giocatore (calcolo dei percorsi minimi) .
+
+minPathCost(ID,R1,C1,R2,C2,Cost):- pathCost(R1,C1,R2,C2,Cost), goals(Ob,R2,C2), player(ID,Ob,_,R1,C1), Cost=#min{Z: pathCost(R1,C1,R4,C4,Z), goals(Ob,R4,C4)}.
+
+%controllo che ci sia effettivamente il cammino per tutti con count di id
+:- numPlayer(X), #count{ID : minPathCost(ID,_,_,_,_,_)}=Z, X!=Z.
+
+%evito di stare vicino ai bordi
+:~ nextPos(R,C), player(ID,"N",_,_,_), myId(ID), pathCost(R,C,R,4,Cost), Cost=#min{K: pathCost(R,C,R,4,K)}. [Cost@1]
+:~ nextPos(R,C), player(ID,"S",_,_,_), myId(ID), pathCost(R,C,R,4,Cost), Cost=#min{K: pathCost(R,C,R,4,K)}. [Cost@1]
+:~ nextPos(R,C), player(ID,"W",_,_,_), myId(ID), pathCost(R,C,4,C,Cost), Cost=#min{K: pathCost(R,C,4,C,K)}. [Cost@1]
+:~ nextPos(R,C), player(ID,"E",_,_,_), myId(ID), pathCost(R,C,4,C,Cost), Cost=#min{K: pathCost(R,C,4,C,K)}. [Cost@1]
+
+%mi calcolo il mio cammino minimo dalla nuova posizione, per poi controllare se è un buon spostamento
+minPathCostNextPos(ID,R1,C1,R2,C2,Cost):- pathCostN(R1,C1,R2,C2,Cost), goals(Ob,R2,C2), player(ID,Ob,_,_,_), myId(ID), nextPos(R1,C1), Cost=#min{Z: pathCostN(R1,C1,R4,C4,Z), goals(Ob,R4,C4)}.
+
+
+%evito di allontanarmi troppo dall'obiettivo
+:~ nextPos(R,C), player(ID,Ob,_,_,_), myId(ID), minPathCostNextPos(ID,R,C,_,_,Cost). [Cost@2]
+
+%se siamo distanti più di 5 passi camminiamo
+:~ minPathCost(ID,_,_,_,_,Cost), Cost>5, myId(ID), newWall(_,_,_). [1@3] %cambiare il livello
+
+%tra i due weak costraint dell'essere lontani e vicini c'è una distanza dove se muoversi o mettere un muro è deciso a caso
+:-newWall(_,_,_), random(X), X=0.
+
+%se una persona è più vicina di 4 passi dall'ob, pago se non gli metto un muro davanti
+:~ minPathCost(ID,R1,C1,R2,C2,Cost), myId(ID2), ID<>ID2, player(ID,"S",_,_,_), not newWall(R1,C1-1,"H"), not wallNotOr(R1,C1-1). [1@4]
+:~ minPathCost(ID,R1,C1,R2,C2,Cost), myId(ID2), ID<>ID2, player(ID,"S",_,_,_), not newWall(R1,C1,"H"), not wallNotOr(R1,C1). [1@4]
+:~ minPathCost(ID,R1,C1,R2,C2,Cost), myId(ID2), ID<>ID2, player(ID,"N",_,_,_), not newWall(R1-1,C1-1,"H"), not wallNotOr(R1-1,C1-1). [1@4]
+:~ minPathCost(ID,R1,C1,R2,C2,Cost), myId(ID2), ID<>ID2, player(ID,"N",_,_,_), not newWall(R1-1,C1,"H"), not wallNotOr(R1-1,C1). [1@4]
+:~ minPathCost(ID,R1,C1,R2,C2,Cost), myId(ID2), ID<>ID2, player(ID,"W",_,_,_), not newWall(R1,C1-1,"V"), not wallNotOr(R1,C1-1). [1@4]
+:~ minPathCost(ID,R1,C1,R2,C2,Cost), myId(ID2), ID<>ID2, player(ID,"W",_,_,_), not newWall(R1-1,C1-1,"V"), not wallNotOr(R1-1,C1-1). [1@4]
+:~ minPathCost(ID,R1,C1,R2,C2,Cost), myId(ID2), ID<>ID2, player(ID,"E",_,_,_), not newWall(R1-1,C1,"V"), not wallNotOr(R1-1,C1). [1@4]
+:~ minPathCost(ID,R1,C1,R2,C2,Cost), myId(ID2), ID<>ID2, player(ID,"E",_,_,_), not newWall(R1,C1,"V"), not wallNotOr(R1,C1). [1@4]
+
+
+%se sono a meno di 3 passi dall'obiettivo, camminiamo
+:~ minPathCost(ID,R1,C1,R2,C2,Cost), Cost<3, myId(ID), newWall(_,_,_). [2@3]
+

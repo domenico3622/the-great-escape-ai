@@ -14,7 +14,7 @@ import it.unical.demacs.ai.model.ai.JYPapi.Agent4;
 
 import java.util.*;
 
-import com.ibm.icu.text.RelativeDateTimeFormatter.Direction;
+import static java.lang.Thread.sleep;
 
 public class Game {
 
@@ -59,7 +59,7 @@ public class Game {
                             }
                             case "JYPapi" -> {
                                 if (agentJYPapi == null)
-                                    //agentJYPapi = new Agent4(current);
+                                    agentJYPapi = new Agent4(current);
                                 agentJYPapi.act();
                             
                             }
@@ -73,6 +73,11 @@ public class Game {
                             //System.out.println("2");
                         }
                         nextTurn();
+                        try {
+                            sleep(100);
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
                     }
                 }
                 // qui ho finito
@@ -275,11 +280,11 @@ public class Game {
             canGo = canGo && canGoPlayersImpl(player, 0, 0, canBeReached);
             for (int i = 0; i < Settings.boardDim; i++){
                 for (int j = 0; j < Settings.boardDim; j++){
-                    System.out.print(canBeReached.get(i).get(j) + " ");
+                    //System.out.print(canBeReached.get(i).get(j) + " ");
                 }
-                System.out.println();
+                //System.out.println();
             }
-            System.out.println();
+            //System.out.println();
         }
         return canGo;
     }
