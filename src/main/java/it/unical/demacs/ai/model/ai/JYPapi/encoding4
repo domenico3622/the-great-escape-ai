@@ -123,14 +123,14 @@ minPathCostNextPos(ID,R1,C1,R2,C2,Cost):- pathCostN(R1,C1,R2,C2,Cost), goals(Ob,
 :-newWall(_,_,_), random(X), X=0.
 
 %se metto un muro pago se non metto un muro davanti alla persona
-:~ minPathCost(ID,R1,C1,R2,C2,Cost), Cost<4, myId(ID2), ID<>ID2, player(ID,"S",_,_,_), not newWall(R1,C1-1,"H"), not wallNotOr(R1,C1-1). [1@4]
-:~ minPathCost(ID,R1,C1,R2,C2,Cost), Cost<4, myId(ID2), ID<>ID2, player(ID,"S",_,_,_), not newWall(R1,C1,"H"), not wallNotOr(R1,C1). [1@4]
-:~ minPathCost(ID,R1,C1,R2,C2,Cost), Cost<4, myId(ID2), ID<>ID2, player(ID,"N",_,_,_), not newWall(R1-1,C1-1,"H"), not wallNotOr(R1-1,C1-1). [1@4]
-:~ minPathCost(ID,R1,C1,R2,C2,Cost), Cost<4, myId(ID2), ID<>ID2, player(ID,"N",_,_,_), not newWall(R1-1,C1,"H"), not wallNotOr(R1-1,C1). [1@4]
-:~ minPathCost(ID,R1,C1,R2,C2,Cost), Cost<4, myId(ID2), ID<>ID2, player(ID,"W",_,_,_), not newWall(R1,C1-1,"V"), not wallNotOr(R1,C1-1). [1@4]
-:~ minPathCost(ID,R1,C1,R2,C2,Cost), Cost<4, myId(ID2), ID<>ID2, player(ID,"W",_,_,_), not newWall(R1-1,C1-1,"V"), not wallNotOr(R1-1,C1-1). [1@4]
-:~ minPathCost(ID,R1,C1,R2,C2,Cost), Cost<4, myId(ID2), ID<>ID2, player(ID,"E",_,_,_), not newWall(R1-1,C1,"V"), not wallNotOr(R1-1,C1). [1@4]
-:~ minPathCost(ID,R1,C1,R2,C2,Cost), Cost<4, myId(ID2), ID<>ID2, player(ID,"E",_,_,_), not newWall(R1,C1,"V"), not wallNotOr(R1,C1). [1@4]
+:~ minPathCost(ID,R1,C1,R2,C2,Cost), myId(ID2), ID<>ID2, player(ID,"S",_,_,_), not newWall(R1,C1-1,"H"), not wallNotOr(R1,C1-1). [1@4]
+:~ minPathCost(ID,R1,C1,R2,C2,Cost), myId(ID2), ID<>ID2, player(ID,"S",_,_,_), not newWall(R1,C1,"H"), not wallNotOr(R1,C1). [1@4]
+:~ minPathCost(ID,R1,C1,R2,C2,Cost), myId(ID2), ID<>ID2, player(ID,"N",_,_,_), not newWall(R1-1,C1-1,"H"), not wallNotOr(R1-1,C1-1). [1@4]
+:~ minPathCost(ID,R1,C1,R2,C2,Cost), myId(ID2), ID<>ID2, player(ID,"N",_,_,_), not newWall(R1-1,C1,"H"), not wallNotOr(R1-1,C1). [1@4]
+:~ minPathCost(ID,R1,C1,R2,C2,Cost), myId(ID2), ID<>ID2, player(ID,"W",_,_,_), not newWall(R1,C1-1,"V"), not wallNotOr(R1,C1-1). [1@4]
+:~ minPathCost(ID,R1,C1,R2,C2,Cost), myId(ID2), ID<>ID2, player(ID,"W",_,_,_), not newWall(R1-1,C1-1,"V"), not wallNotOr(R1-1,C1-1). [1@4]
+:~ minPathCost(ID,R1,C1,R2,C2,Cost), myId(ID2), ID<>ID2, player(ID,"E",_,_,_), not newWall(R1-1,C1,"V"), not wallNotOr(R1-1,C1). [1@4]
+:~ minPathCost(ID,R1,C1,R2,C2,Cost), myId(ID2), ID<>ID2, player(ID,"E",_,_,_), not newWall(R1,C1,"V"), not wallNotOr(R1,C1). [1@4]
 
 
 %se sono a meno di 3 passi dall'obiettivo, camminiamo
