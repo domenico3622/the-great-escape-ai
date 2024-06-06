@@ -1,3 +1,4 @@
+
 wall(X2,Y2,X1,Y1,X4,Y4,X3,Y3) :- wall(X1,Y1,X2,Y2,X3,Y3,X4,Y4).
 
 goalVertical(up,0).
@@ -71,7 +72,7 @@ min(D,M) :- #min{N: minPath(Dir1,N), direction(Dir2), Dir2!=Dir1}=M, minPath(D,M
 % In alternativa, se c'è solo un avversario col percorso minimo (tra tutti quanti) devo per forza scegliere
 % lui come target.
 %
-% Se ne ho più di 2 col percorso minimo, scelgo quello con il più basso, o in alternativa quello che viene prima
+% Se ne ho più di 2 col percorso minimo, scelgo quello con il numero di muri più basso, o in alternativa quello che viene prima
 % in termini di turno di gioco.
 alternative1(D) :- next(D), minPath(D,N1), minPath(Dist,N2), direction(Dist), N1<=N2+3.
 alternative2(P) :- not alternative1(D), next(D), min(P,_), #count{Y: min(Y,_)}=1.
@@ -89,12 +90,15 @@ notEquality :- minPath(D,N), target(D), N<=2, minPath(D1,N1), direction(D1), N<N
 % Se la situazione iniziale è equilibrata, e piazzando un muro mi accorgo di non aver allungato di tanto il percorso
 % al mio target, allora devo muovermi
 longerPath :- minPath(D,N), target(D), minPathPlayer(D,N2), N2>=N+6.
-:- direction(D), not notEquality, placeWall(_,_,_,_,_,_,_,_), not longerPath, not over.
+:- not notEquality, placeWall(_,_,_,_,_,_,_,_), not longerPath, not over.
 
 % non è possibile che, se nella mappa non sono ancora stati piazzati muri e il mio target è lontano dalla fine
 % più di 3 passi, io non mi stia muovendo
 theresWall :- wall(_,_,_,_,_,_,_,_).
 :- not theresWall, notMoving, minPath(D,N),target(D), N>3.
+
+%se i giocatori hanno ancora muri da mettere
+wallToPut:-player(_,_,_,D1,R), direction(D2),D1!=D2, R>0.
 
 % nel caso venga piazzato un muro, mi assicuro che tutti i giocatori riescono a raggiungere il traguardo
 goal(D) :- pathPlayer(X1,Y1,_,C,D,_), player(_,X1,Y1,D,_), goalHorizontal(D,C).
@@ -117,11 +121,12 @@ posOver(X,Y) :- overWall(_,_,X,Y,_,_,_,_).
 posOver(X,Y) :- overWall(_,_,_,_,X,Y,_,_).
 posOver(X,Y) :- overWall(_,_,_,_,_,_,X,Y).
 
-% derivo se mi trovo su una delle quattro cordinate del muro
+% derivo se mi trovo su una delle quattro coordinate del muro in quanto in tal caso dovrei semplicemente muovermi
 cantPutOver :- player(_,X,Y,D,_), direction(D), posOver(X,Y).
 
 % derivo se esiste un muro da mettere al contrario, e se io non mi trovo su una delle sue coordinate
-over :- overWall(_,_,_,_,_,_,_,_), not cantPutOver.
+% e gli altri giocatori hanno ancora muri da mettere
+over :- overWall(_,_,_,_,_,_,_,_), not cantPutOver, wallToPut.
 
 % se noto che piazzando un muro il percorso del mio target non è cambiato, e non ho trovato un muro da mettere
 % al contrario, devo muovermi
@@ -147,7 +152,7 @@ over :- overWall(_,_,_,_,_,_,_,_), not cantPutOver.
 % di 4 passi dal traguardo.
 %
 % Inoltre non vorrei piazzare un muro se mi sono allungato il percorso minimo
-:~ player(_,_,_,D,R), direction(D), R<=2, placeWall(_,_,_,_,_,_,_,_), minPath(D,N1), target(D2), minPath(D2,N2), D2!=D, N1>4, N2>4.[1@4]
+:~ player(_,_,_,D,R), direction(D), R<=2, placeWall(_,_,_,_,_,_,_,_), minPath(D,N1), target(D2), minPath(D2,N2), N1>=4, N2>=4, not longerPath.[1@4]
 :~ placeWall(_,_,_,_,_,_,_,_), minPath(D,N1), direction(D), minPathPlayer(D,N2), N2>N1.[1@4]
 
 % non vorrei piazzare un muro se sono più vicino al traguardo di 2 passi rispetto al mio target.

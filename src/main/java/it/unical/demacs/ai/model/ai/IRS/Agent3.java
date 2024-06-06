@@ -59,7 +59,6 @@ public class Agent3 implements Agent{
                 if(next==true){
                     facts.addObjectInput(new NextPlayer(new SymbolicConstant(player.getDirection().toString().toLowerCase())));
                     next=false;
-                    System.out.println(player.getDirection().toString());
                 }
                 facts.addObjectInput(new PlayerAtom(count, player.getCoord().row, player.getCoord().column, new SymbolicConstant(player.getDirection().toString().toLowerCase()), player.getWallsAvailable()));
                 count++;
@@ -99,7 +98,6 @@ public class Agent3 implements Agent{
         Output o =  handler.startSync();
         AnswerSets answersets = (AnswerSets) o;
         for(AnswerSet a:answersets.getAnswersets()){
-            System.out.println(a);
             try {
                 for(Object obj:a.getAtoms()){
                     if(obj instanceof MovePlayer) {
