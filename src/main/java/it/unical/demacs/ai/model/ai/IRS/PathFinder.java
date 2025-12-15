@@ -9,34 +9,40 @@ import java.awt.*;
 import java.util.Arrays;
 import java.util.PriorityQueue;
 
-public class PathFinder
-{
-    static class Node{
+public class PathFinder {
+    static class Node {
         int row, col, distance;
-        public Node(int row, int col, int distance){
+
+        public Node(int row, int col, int distance) {
             this.row = row;
             this.col = col;
             this.distance = distance;
         }
     }
+
     enum Dir {
         UP(-1, 0),
         DOWN(1, 0),
         LEFT(0, -1),
         RIGHT(0, 1);
+
         private final int rowDelta;
         private final int colDelta;
+
         Dir(int rowDelta, int colDelta) {
             this.rowDelta = rowDelta;
             this.colDelta = colDelta;
         }
+
         public int getRowDelta() {
             return rowDelta;
         }
+
         public int getColDelta() {
             return colDelta;
         }
     }
+
     public static int shortestPath(Player player) {
         int rows = 9;
         int cols = 9;
@@ -48,7 +54,7 @@ public class PathFinder
         for (int i = 0; i < rows; i++)
             Arrays.fill(distances[i], Integer.MAX_VALUE);
 
-        Dir[] directions = {Dir.DOWN, Dir.UP, Dir.RIGHT, Dir.LEFT};
+        Dir[] directions = { Dir.DOWN, Dir.UP, Dir.RIGHT, Dir.LEFT };
 
         queue.offer(new Node(player.getCoord().row, player.getCoord().column, 0));
 
@@ -60,9 +66,7 @@ public class PathFinder
             int row = curr.row;
             int col = curr.col;
 
-
-            switch (player.getDirection())
-            {
+            switch (player.getDirection()) {
                 case RIGHT -> {
                     if (col == 8)
                         return distances[row][col];
@@ -91,15 +95,15 @@ public class PathFinder
                 int newCol = col + dir.getColDelta();
 
                 Settings.Directions casted = null;
-                switch (dir)
-                {
+                switch (dir) {
                     case RIGHT -> casted = Settings.Directions.RIGHT;
                     case LEFT -> casted = Settings.Directions.LEFT;
                     case DOWN -> casted = Settings.Directions.DOWN;
                     case UP -> casted = Settings.Directions.UP;
                 }
 
-                if (Game.getInstance().canMove(toCheck, 0, 0, casted) && !visited[newRow][newCol]) {
+                if (newRow >= 0 && newRow < rows && newCol >= 0 && newCol < cols
+                        && Game.getInstance().canMove(toCheck, 0, 0, casted) && !visited[newRow][newCol]) {
                     int newDistance = distances[row][col] + 1;
                     if (newDistance < distances[newRow][newCol]) {
                         distances[newRow][newCol] = newDistance;

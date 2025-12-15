@@ -4,6 +4,10 @@
 
 ## 📖 Project Overview
 
+<p align="center">
+  <img src="assets/image.png" width="500" alt="The Great Escape - Gameplay Preview">
+</p>
+
 The game involves 4 players starting at the center of each side of a 9x9 grid. The objective is to be the first to reach any cell on the opposite side. Players can move one cell at a time or place walls to block opponents.
 
 This project implements the game logic and integrates **4 distinct AI agents**, each developed by different teams/approaches, leveraging symbolic AI (ASP) via the **EmbASP** framework.
